@@ -15,7 +15,10 @@ module.exports = {
   createFineCON: async (_req, _res) => {
     const CC_RESPONSE = new CmmHttpRespClass(_req, _res);
     try {
-      const FINE_RESULT = await createFineSV(_req.body, _req.police._id).catch((_error) => {
+      // Usar los datos validados en lugar de _req.body
+      const VALIDATED_DATA = _req.CC?.VALIDATED_DATA || _req.body;
+      
+      const FINE_RESULT = await createFineSV(VALIDATED_DATA, _req.police._id).catch((_error) => {
         console.log(_error);
         throw new CmmErrorClass(__filename, 'FINEE001').parseCatch(_error);
       });
@@ -99,7 +102,8 @@ module.exports = {
     const CC_RESPONSE = new CmmHttpRespClass(_req, _res);
     try {
       const { id } = _req.params;
-      const UPDATE_DATA = _req.body;
+      // Usar los datos validados en lugar de _req.body
+      const UPDATE_DATA = _req.CC?.VALIDATED_DATA || _req.body;
 
       const FINE_RESULT = await updateFineSV(id, UPDATE_DATA, _req.police._id).catch((_error) => {
         throw new CmmErrorClass(__filename, 'FINEE005').parseCatch(_error);

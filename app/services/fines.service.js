@@ -54,7 +54,7 @@ module.exports = {
 
       // Calcular el amount basado en las unidades tributarias
       const CALCULATED_AMOUNT = INFRACTION_EXISTS.taxUnits * TAX_UNIT_VALUE;
-
+      
       const FINE_DATA = {
         ..._fineData,
         infraction: INFRACTION_EXISTS._id,
