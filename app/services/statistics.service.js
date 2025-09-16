@@ -50,7 +50,7 @@ module.exports = {
           }
         }
       ]).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'STATISTICS001', _error).database();
+        throw new CmmErrorClass(__filename, 'STATISTICSE001', _error).database();
       });
 
       return STATISTICS_RESULT[0] || {
@@ -61,7 +61,7 @@ module.exports = {
         totalTaxUnits: 0
       };
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'STATISTICS002', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'STATISTICSE002', _error).server() : _error;
     }
   },
 
@@ -100,12 +100,12 @@ module.exports = {
           $sort: { '_id.year': -1, '_id.month': -1, '_id.day': -1 }
         }
       ]).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'STATISTICS003', _error).database();
+        throw new CmmErrorClass(__filename, 'STATISTICSE003', _error).database();
       });
 
       return STATISTICS_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'STATISTICS004', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'STATISTICSE004', _error).server() : _error;
     }
   },
 
@@ -172,12 +172,12 @@ module.exports = {
           $sort: { totalFines: -1 }
         }
       ]).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'STATISTICS005', _error).database();
+        throw new CmmErrorClass(__filename, 'STATISTICSE005', _error).database();
       });
 
       return PERFORMANCE_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'STATISTICS006', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'STATISTICSE006', _error).server() : _error;
     }
   },
 
@@ -240,12 +240,12 @@ module.exports = {
           $limit: 10
         }
       ]).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'STATISTICS007', _error).database();
+        throw new CmmErrorClass(__filename, 'STATISTICSE007', _error).database();
       });
 
       return INFRACTIONS_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'STATISTICS008', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'STATISTICSE008', _error).server() : _error;
     }
   },
 
@@ -289,12 +289,12 @@ module.exports = {
           $limit: 10
         }
       ]).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'STATISTICS009', _error).database();
+        throw new CmmErrorClass(__filename, 'STATISTICSE009', _error).database();
       });
 
       return LOCATIONS_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'STATISTICS010', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'STATISTICSE010', _error).server() : _error;
     }
   },
 
@@ -356,12 +356,12 @@ module.exports = {
           $limit: 10
         }
       ]).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'STATISTICS011', _error).database();
+        throw new CmmErrorClass(__filename, 'STATISTICSE011', _error).database();
       });
 
       return VEHICLES_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'STATISTICS012', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'STATISTICSE012', _error).server() : _error;
     }
   },
 
@@ -388,7 +388,7 @@ module.exports = {
           }
         }
       ]).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'STATISTICS013', _error).database();
+        throw new CmmErrorClass(__filename, 'STATISTICSE013', _error).database();
       });
 
       const RECENT_FINES = await FINE_MODEL.find(WHERE)
@@ -398,7 +398,7 @@ module.exports = {
         .sort({ createdAt: -1 })
         .limit(5)
         .catch((_error) => {
-          throw new CmmErrorClass(__filename, 'STATISTICS014', _error).database();
+          throw new CmmErrorClass(__filename, 'STATISTICSE014', _error).database();
         });
 
       return {
@@ -406,7 +406,7 @@ module.exports = {
         recentFines: RECENT_FINES
       };
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'STATISTICS015', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'STATISTICSE015', _error).server() : _error;
     }
   },
 
@@ -444,12 +444,12 @@ module.exports = {
           $sort: { '_id.year': -1, '_id.month': -1 }
         }
       ]).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'STATISTICS016', _error).database();
+        throw new CmmErrorClass(__filename, 'STATISTICSE016', _error).database();
       });
 
       return REVENUE_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'STATISTICS017', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'STATISTICSE017', _error).server() : _error;
     }
   }
 };

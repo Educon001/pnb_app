@@ -16,32 +16,32 @@ module.exports = {
     try {
       // Verificar si ya existe un vehículo con esta placa
       const EXISTING_VEHICLE = await VEHICLE_MODEL.findOne({ plate: _vehicleData.plate }).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'VEHICLE001', _error).database();
+        throw new CmmErrorClass(__filename, 'VEHICLEE001', _error).database();
       });
 
       if (EXISTING_VEHICLE) {
-        throw new CmmErrorClass(__filename, 'VEHICLE002', 'Ya existe un vehículo con esta placa').frontend();
+        throw new CmmErrorClass(__filename, 'VEHICLEE002', 'Ya existe un vehículo con esta placa').frontend();
       }
 
       // Verificar si ya existe un vehículo con este número serial
       if (_vehicleData.serialNumber) {
         const EXISTING_SERIAL = await VEHICLE_MODEL.findOne({ serialNumber: _vehicleData.serialNumber }).catch((_error) => {
-          throw new CmmErrorClass(__filename, 'VEHICLE003', _error).database();
+          throw new CmmErrorClass(__filename, 'VEHICLEE003', _error).database();
         });
 
         if (EXISTING_SERIAL) {
-          throw new CmmErrorClass(__filename, 'VEHICLE004', 'Ya existe un vehículo con este número serial').frontend();
+          throw new CmmErrorClass(__filename, 'VEHICLEE004', 'Ya existe un vehículo con este número serial').frontend();
         }
       }
 
       // Verificar si ya existe un vehículo con este número de motor
       if (_vehicleData.engineNumber) {
         const EXISTING_ENGINE = await VEHICLE_MODEL.findOne({ engineNumber: _vehicleData.engineNumber }).catch((_error) => {
-          throw new CmmErrorClass(__filename, 'VEHICLE005', _error).database();
+          throw new CmmErrorClass(__filename, 'VEHICLEE005', _error).database();
         });
 
         if (EXISTING_ENGINE) {
-          throw new CmmErrorClass(__filename, 'VEHICLE006', 'Ya existe un vehículo con este número de motor').frontend();
+          throw new CmmErrorClass(__filename, 'VEHICLEE006', 'Ya existe un vehículo con este número de motor').frontend();
         }
       }
 
@@ -52,12 +52,12 @@ module.exports = {
       };
 
       const VEHICLE_RESULT = await VEHICLE_MODEL.create(VEHICLE_DATA).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'VEHICLE007', _error).database();
+        throw new CmmErrorClass(__filename, 'VEHICLEE007', _error).database();
       });
 
       return VEHICLE_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'VEHICLE008', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'VEHICLEE008', _error).server() : _error;
     }
   },
 
@@ -97,11 +97,11 @@ module.exports = {
         .skip(SKIP)
         .limit(_limit)
         .catch((_error) => {
-          throw new CmmErrorClass(__filename, 'VEHICLE009', _error).database();
+          throw new CmmErrorClass(__filename, 'VEHICLEE009', _error).database();
         });
 
       const TOTAL_COUNT = await VEHICLE_MODEL.countDocuments(WHERE).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'VEHICLE010', _error).database();
+        throw new CmmErrorClass(__filename, 'VEHICLEE010', _error).database();
       });
 
       return {
@@ -114,7 +114,7 @@ module.exports = {
         }
       };
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'VEHICLE011', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'VEHICLEE011', _error).server() : _error;
     }
   },
 
@@ -126,16 +126,16 @@ module.exports = {
   async getVehicleByIdSV(_id) {
     try {
       const VEHICLE_RESULT = await VEHICLE_MODEL.findById(_id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'VEHICLE012', _error).database();
+        throw new CmmErrorClass(__filename, 'VEHICLEE012', _error).database();
       });
 
       if (!VEHICLE_RESULT) {
-        throw new CmmErrorClass(__filename, 'VEHICLE013', 'Vehículo no encontrado').frontend();
+        throw new CmmErrorClass(__filename, 'VEHICLEE013', 'Vehículo no encontrado').frontend();
       }
 
       return VEHICLE_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'VEHICLE014', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'VEHICLEE014', _error).server() : _error;
     }
   },
 
@@ -147,16 +147,16 @@ module.exports = {
   async getVehicleByPlateSV(_plate) {
     try {
       const VEHICLE_RESULT = await VEHICLE_MODEL.findOne({ plate: _plate }).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'VEHICLE015', _error).database();
+        throw new CmmErrorClass(__filename, 'VEHICLEE015', _error).database();
       });
 
       if (!VEHICLE_RESULT) {
-        throw new CmmErrorClass(__filename, 'VEHICLE016', 'Vehículo no encontrado').frontend();
+        throw new CmmErrorClass(__filename, 'VEHICLEE016', 'Vehículo no encontrado').frontend();
       }
 
       return VEHICLE_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'VEHICLE017', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'VEHICLEE017', _error).server() : _error;
     }
   },
 
@@ -170,11 +170,11 @@ module.exports = {
   async updateVehicleSV(_id, _updateData, _officerId) {
     try {
       const VEHICLE_EXISTS = await VEHICLE_MODEL.findById(_id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'VEHICLE018', _error).database();
+        throw new CmmErrorClass(__filename, 'VEHICLEE018', _error).database();
       });
 
       if (!VEHICLE_EXISTS) {
-        throw new CmmErrorClass(__filename, 'VEHICLE019', 'Vehículo no encontrado').frontend();
+        throw new CmmErrorClass(__filename, 'VEHICLEE019', 'Vehículo no encontrado').frontend();
       }
 
       // Verificar si la nueva placa ya existe en otro vehículo
@@ -183,11 +183,11 @@ module.exports = {
           plate: _updateData.plate,
           _id: { $ne: _id }
         }).catch((_error) => {
-          throw new CmmErrorClass(__filename, 'VEHICLE020', _error).database();
+          throw new CmmErrorClass(__filename, 'VEHICLEE020', _error).database();
         });
 
         if (EXISTING_VEHICLE) {
-          throw new CmmErrorClass(__filename, 'VEHICLE021', 'Ya existe un vehículo con esta placa').frontend();
+          throw new CmmErrorClass(__filename, 'VEHICLEE021', 'Ya existe un vehículo con esta placa').frontend();
         }
       }
 
@@ -197,11 +197,11 @@ module.exports = {
           serialNumber: _updateData.serialNumber,
           _id: { $ne: _id }
         }).catch((_error) => {
-          throw new CmmErrorClass(__filename, 'VEHICLE022', _error).database();
+          throw new CmmErrorClass(__filename, 'VEHICLEE022', _error).database();
         });
 
         if (EXISTING_SERIAL) {
-          throw new CmmErrorClass(__filename, 'VEHICLE023', 'Ya existe un vehículo con este número serial').frontend();
+          throw new CmmErrorClass(__filename, 'VEHICLEE023', 'Ya existe un vehículo con este número serial').frontend();
         }
       }
 
@@ -211,11 +211,11 @@ module.exports = {
           engineNumber: _updateData.engineNumber,
           _id: { $ne: _id }
         }).catch((_error) => {
-          throw new CmmErrorClass(__filename, 'VEHICLE024', _error).database();
+          throw new CmmErrorClass(__filename, 'VEHICLEE024', _error).database();
         });
 
         if (EXISTING_ENGINE) {
-          throw new CmmErrorClass(__filename, 'VEHICLE025', 'Ya existe un vehículo con este número de motor').frontend();
+          throw new CmmErrorClass(__filename, 'VEHICLEE025', 'Ya existe un vehículo con este número de motor').frontend();
         }
       }
 
@@ -225,12 +225,12 @@ module.exports = {
       };
 
       const VEHICLE_RESULT = await VEHICLE_MODEL.findByIdAndUpdate(_id, UPDATE_DATA, { new: true }).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'VEHICLE026', _error).database();
+        throw new CmmErrorClass(__filename, 'VEHICLEE026', _error).database();
       });
 
       return VEHICLE_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'VEHICLE027', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'VEHICLEE027', _error).server() : _error;
     }
   },
 
@@ -244,15 +244,15 @@ module.exports = {
   async reportStolenSV(_id, _stolenData, _officerId) {
     try {
       const VEHICLE_EXISTS = await VEHICLE_MODEL.findById(_id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'VEHICLE028', _error).database();
+        throw new CmmErrorClass(__filename, 'VEHICLEE028', _error).database();
       });
 
       if (!VEHICLE_EXISTS) {
-        throw new CmmErrorClass(__filename, 'VEHICLE029', 'Vehículo no encontrado').frontend();
+        throw new CmmErrorClass(__filename, 'VEHICLEE029', 'Vehículo no encontrado').frontend();
       }
 
       if (VEHICLE_EXISTS.stolen) {
-        throw new CmmErrorClass(__filename, 'VEHICLE030', 'El vehículo ya está reportado como robado').frontend();
+        throw new CmmErrorClass(__filename, 'VEHICLEE030', 'El vehículo ya está reportado como robado').frontend();
       }
 
       const VEHICLE_RESULT = await VEHICLE_MODEL.findByIdAndUpdate(_id, 

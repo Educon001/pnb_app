@@ -16,13 +16,12 @@ module.exports = {
     const CC_RESPONSE = new CmmHttpRespClass(_req, _res);
     try {
       const FINE_RESULT = await createFineSV(_req.body, _req.police._id).catch((_error) => {
-        console.log(_error);
-        throw new CmmErrorClass(__filename, 'FINE003').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'FINEE001').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Multa creada exitosamente', FINE_RESULT, 'FINE001');
+      return CC_RESPONSE.send('Multa creada exitosamente', FINE_RESULT, 'FINES001');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'FINE003', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'FINEE001', _error).server() : _error);
     }
   },
 
@@ -53,12 +52,12 @@ module.exports = {
       }
 
       const RESULT = await getFinesSV(FILTERS, parseInt(page), parseInt(limit)).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'FINE004').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'FINEE002').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Multas obtenidas exitosamente', RESULT, 'FINE002');
+      return CC_RESPONSE.send('Multas obtenidas exitosamente', RESULT, 'FINES002');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'FINE004', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'FINEE002', _error).server() : _error);
     }
   },
 
@@ -73,19 +72,19 @@ module.exports = {
     try {
       const { id } = _req.params;
       const FINE_RESULT = await getFineByIdSV(id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'FINE005').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'FINEE003').parseCatch(_error);
       });
 
       // Verificar permisos (solo el funcionario que creó la multa o un supervisor puede verla)
       if (FINE_RESULT.officer._id.toString() !== _req.police._id.toString()) {
         if (!_req.police.roles.includes('supervisor') && !_req.police.roles.includes('admin')) {
-          throw new CmmErrorClass(__filename, 'FINE006', 'No tiene permisos para ver esta multa').frontend();
+          throw new CmmErrorClass(__filename, 'FINEE004', 'No tiene permisos para ver esta multa').frontend();
         }
       }
 
-      return CC_RESPONSE.send('Multa obtenida exitosamente', FINE_RESULT, 'FINE003');
+      return CC_RESPONSE.send('Multa obtenida exitosamente', FINE_RESULT, 'FINES003');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'FINE005', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'FINEE003', _error).server() : _error);
     }
   },
 
@@ -102,12 +101,12 @@ module.exports = {
       const UPDATE_DATA = _req.body;
 
       const FINE_RESULT = await updateFineSV(id, UPDATE_DATA, _req.police._id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'FINE007').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'FINEE005').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Multa actualizada exitosamente', FINE_RESULT, 'FINE004');
+      return CC_RESPONSE.send('Multa actualizada exitosamente', FINE_RESULT, 'FINES004');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'FINE007', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'FINEE005', _error).server() : _error);
     }
   },
 
@@ -122,12 +121,12 @@ module.exports = {
     try {
       const { id } = _req.params;
       const FINE_RESULT = await sendFineSV(id, _req.police._id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'FINE008').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'FINEE006').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Multa enviada exitosamente', FINE_RESULT, 'FINE005');
+      return CC_RESPONSE.send('Multa enviada exitosamente', FINE_RESULT, 'FINES005');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'FINE008', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'FINEE006', _error).server() : _error);
     }
   },
 
@@ -144,16 +143,16 @@ module.exports = {
       const { reason } = _req.body;
 
       if (!reason) {
-        throw new CmmErrorClass(__filename, 'FINE009', 'El motivo de anulación es obligatorio').returnValidate();
+        throw new CmmErrorClass(__filename, 'FINEE007', 'El motivo de anulación es obligatorio').returnValidate();
       }
 
       const FINE_RESULT = await cancelFineSV(id, reason, _req.police._id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'FINE010').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'FINEE008').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Multa anulada exitosamente', FINE_RESULT, 'FINE006');
+      return CC_RESPONSE.send('Multa anulada exitosamente', FINE_RESULT, 'FINES006');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'FINE010', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'FINEE008', _error).server() : _error);
     }
   },
 
@@ -180,12 +179,12 @@ module.exports = {
       }
 
       const STATISTICS_RESULT = await getFinesStatisticsSV(FILTERS).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'FINE011').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'FINEE009').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Estadísticas obtenidas exitosamente', STATISTICS_RESULT, 'FINE007');
+      return CC_RESPONSE.send('Estadísticas obtenidas exitosamente', STATISTICS_RESULT, 'FINES007');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'FINE011', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'FINEE009', _error).server() : _error);
     }
   },
 
@@ -206,20 +205,20 @@ module.exports = {
       }
 
       const STATISTICS_RESULT = await getFinesStatisticsSV(FILTERS).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'FINE012').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'FINEE010').parseCatch(_error);
       });
 
       // Obtener multas recientes
       const RECENT_FINES_RESULT = await getFinesSV(FILTERS, 1, 5).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'FINE013').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'FINEE011').parseCatch(_error);
       });
 
       return CC_RESPONSE.send('Resumen del dashboard obtenido exitosamente', {
         statistics: STATISTICS_RESULT,
         recent_fines: RECENT_FINES_RESULT.fines
-      }, 'FINE008');
+      }, 'FINES008');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'FINE012', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'FINEE010', _error).server() : _error);
     }
   }
 };

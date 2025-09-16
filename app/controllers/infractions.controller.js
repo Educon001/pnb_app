@@ -19,20 +19,20 @@ module.exports = {
 
       // Validaciones básicas
       if (!code || !name || !description || !article || !severity) {
-        throw new CmmErrorClass(__filename, 'INFRACTION001', 'Código, nombre, descripción, artículo y gravedad son obligatorios').returnValidate();
+        throw new CmmErrorClass(__filename, 'INFRACTIONE001', 'Código, nombre, descripción, artículo y gravedad son obligatorios').returnValidate();
       }
 
       if (!taxUnits || !bolivarValue) {
-        throw new CmmErrorClass(__filename, 'INFRACTION002', 'Unidades tributarias y valor en bolívares son obligatorios').returnValidate();
+        throw new CmmErrorClass(__filename, 'INFRACTIONE002', 'Unidades tributarias y valor en bolívares son obligatorios').returnValidate();
       }
 
       const INFRACTION_RESULT = await createInfractionSV(_req.body, _req.police._id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'INFRACTION003').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'INFRACTIONE003').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Infracción creada exitosamente', INFRACTION_RESULT, 'INFRACTION001');
+      return CC_RESPONSE.send('Infracción creada exitosamente', INFRACTION_RESULT, 'INFRACTIONS001');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'INFRACTION003', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'INFRACTIONE003', _error).server() : _error);
     }
   },
 
@@ -55,12 +55,12 @@ module.exports = {
       };
 
       const RESULT = await getInfractionsSV(FILTERS, parseInt(page), parseInt(limit)).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'INFRACTION004').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'INFRACTIONE004').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Infracciones obtenidas exitosamente', RESULT, 'INFRACTION002');
+      return CC_RESPONSE.send('Infracciones obtenidas exitosamente', RESULT, 'INFRACTIONS002');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'INFRACTION004', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'INFRACTIONE004', _error).server() : _error);
     }
   },
 
@@ -75,12 +75,12 @@ module.exports = {
     try {
       const { id } = _req.params;
       const INFRACTION_RESULT = await getInfractionByIdSV(id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'INFRACTION005').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'INFRACTIONE005').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Infracción obtenida exitosamente', INFRACTION_RESULT, 'INFRACTION003');
+      return CC_RESPONSE.send('Infracción obtenida exitosamente', INFRACTION_RESULT, 'INFRACTIONS003');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'INFRACTION005', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'INFRACTIONE005', _error).server() : _error);
     }
   },
 
@@ -97,12 +97,12 @@ module.exports = {
       const UPDATE_DATA = _req.body;
 
       const INFRACTION_RESULT = await updateInfractionSV(id, UPDATE_DATA, _req.police._id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'INFRACTION006').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'INFRACTIONE006').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Infracción actualizada exitosamente', INFRACTION_RESULT, 'INFRACTION004');
+      return CC_RESPONSE.send('Infracción actualizada exitosamente', INFRACTION_RESULT, 'INFRACTIONS004');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'INFRACTION006', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'INFRACTIONE006', _error).server() : _error);
     }
   },
 
@@ -117,12 +117,12 @@ module.exports = {
     try {
       const { id } = _req.params;
       const RESULT = await deleteInfractionSV(id, _req.police._id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'INFRACTION007').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'INFRACTIONE007').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send(RESULT.message, null, 'INFRACTION005');
+      return CC_RESPONSE.send(RESULT.message, null, 'INFRACTIONS005');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'INFRACTION007', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'INFRACTIONE007', _error).server() : _error);
     }
   },
 
@@ -137,12 +137,12 @@ module.exports = {
     try {
       const { severity } = _req.params;
       const INFRACTIONS_RESULT = await getInfractionsBySeveritySV(severity).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'INFRACTION008').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'INFRACTIONE008').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Infracciones obtenidas exitosamente', INFRACTIONS_RESULT, 'INFRACTION006');
+      return CC_RESPONSE.send('Infracciones obtenidas exitosamente', INFRACTIONS_RESULT, 'INFRACTIONS006');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'INFRACTION008', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'INFRACTIONE008', _error).server() : _error);
     }
   },
 
@@ -157,12 +157,12 @@ module.exports = {
     try {
       const { type } = _req.params;
       const INFRACTIONS_RESULT = await getInfractionsByVehicleTypeSV(type).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'INFRACTION009').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'INFRACTIONE009').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Infracciones obtenidas exitosamente', INFRACTIONS_RESULT, 'INFRACTION007');
+      return CC_RESPONSE.send('Infracciones obtenidas exitosamente', INFRACTIONS_RESULT, 'INFRACTIONS007');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'INFRACTION009', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'INFRACTIONE009', _error).server() : _error);
     }
   },
 
@@ -176,12 +176,12 @@ module.exports = {
     const CC_RESPONSE = new CmmHttpRespClass(_req, _res);
     try {
       const STATISTICS_RESULT = await getInfractionsStatisticsSV().catch((_error) => {
-        throw new CmmErrorClass(__filename, 'INFRACTION010').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'INFRACTIONE010').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Estadísticas obtenidas exitosamente', STATISTICS_RESULT, 'INFRACTION008');
+      return CC_RESPONSE.send('Estadísticas obtenidas exitosamente', STATISTICS_RESULT, 'INFRACTIONS008');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'INFRACTION010', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'INFRACTIONE010', _error).server() : _error);
     }
   },
 
@@ -197,16 +197,16 @@ module.exports = {
       const { term } = _req.query;
 
       if (!term || term.length < 2) {
-        throw new CmmErrorClass(__filename, 'INFRACTION011', 'El término de búsqueda debe tener al menos 2 caracteres').returnValidate();
+        throw new CmmErrorClass(__filename, 'INFRACTIONE011', 'El término de búsqueda debe tener al menos 2 caracteres').returnValidate();
       }
 
       const INFRACTIONS_RESULT = await searchInfractionsSV(term).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'INFRACTION012').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'INFRACTIONE012').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Búsqueda completada exitosamente', INFRACTIONS_RESULT, 'INFRACTION009');
+      return CC_RESPONSE.send('Búsqueda completada exitosamente', INFRACTIONS_RESULT, 'INFRACTIONS009');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'INFRACTION012', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'INFRACTIONE012', _error).server() : _error);
     }
   }
 };

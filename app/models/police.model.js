@@ -63,13 +63,13 @@ const POLICE_MODEL = new Schema(
     roles: [{
       type: Schema.Types.String,
       description: 'Roles del policía',
-      enum: ['OFFICER', 'SUPERVISOR', 'ADMIN'],
+      enum: ['OFICIAL', 'SUPERVISOR', 'ADMIN'],
       uppercase: true,
     }],
     rank: {
       type: Schema.Types.String,
       description: 'Rango del policía',
-      enum: ['CADET', 'OFFICER', 'SERGEANT', 'LIEUTENANT', 'CAPTAIN', 'MAJOR', 'COLONEL', 'GENERAL'],
+      enum: ['CADETE', 'OFICIAL', 'SARGENTO', 'CABO', 'GUARDIA', 'COMISARIO', 'SUPERINTENDENTE'],
       uppercase: true,
     },
     department: {

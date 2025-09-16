@@ -14,11 +14,11 @@ const Fine = require('../models/fine.model');
 // Datos de ejemplo
 const policeData = [
   {
-    firstName: 'Juan Carlos',
+    firstName: 'Juan',
     lastName: 'Rodriguez',
     idCard: '12345678',
     badgeNumber: 'PNB001',
-    rank: 'OFFICER',
+    rank: 'OFICIAL',
     department: 'TRÁNSITO TERRESTRE',
     username: 'jrodriguez',
     password: '123456',
@@ -29,11 +29,11 @@ const policeData = [
     active: true
   },
   {
-    firstName: 'María Elena',
+    firstName: 'María',
     lastName: 'González',
     idCard: '87654321',
     badgeNumber: 'PNB002',
-    rank: 'SERGEANT',
+    rank: 'SARGENTO',
     department: 'TRÁNSITO TERRESTRE',
     username: 'mgonzalez',
     password: '123456',
@@ -48,14 +48,14 @@ const policeData = [
     lastName: 'Pérez',
     idCard: '11223344',
     badgeNumber: 'PNB003',
-    rank: 'OFFICER',
+    rank: 'OFICIAL',
     department: 'TRÁNSITO TERRESTRE',
     username: 'pperez',
     password: '123456',
     email: 'pperez@pnb.gob.ve',
     phone: '04125556677',
     address: 'Maracay, Venezuela',
-    roles: ['OFFICER'],
+    roles: ['OFICIAL'],
     active: true
   }
 ];

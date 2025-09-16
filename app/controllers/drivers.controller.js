@@ -19,24 +19,24 @@ module.exports = {
 
       // Validaciones básicas
       if (!firstName || !lastName || !idCard || !licenseNumber || !licenseGrade) {
-        throw new CmmErrorClass(__filename, 'DRIVER001', 'Nombres, apellidos, cédula, número de licencia y grado son obligatorios').returnValidate();
+        throw new CmmErrorClass(__filename, 'DRIVERE001', 'Nombres, apellidos, cédula, número de licencia y grado son obligatorios').returnValidate();
       }
 
       if (!licenseIssueDate || !licenseExpiryDate) {
-        throw new CmmErrorClass(__filename, 'DRIVER002', 'Fechas de emisión y vencimiento de licencia son obligatorias').returnValidate();
+        throw new CmmErrorClass(__filename, 'DRIVERE002', 'Fechas de emisión y vencimiento de licencia son obligatorias').returnValidate();
       }
 
       if (!address || !birthDate || !gender) {
-        throw new CmmErrorClass(__filename, 'DRIVER003', 'Dirección, fecha de nacimiento y sexo son obligatorios').returnValidate();
+        throw new CmmErrorClass(__filename, 'DRIVERE003', 'Dirección, fecha de nacimiento y sexo son obligatorios').returnValidate();
       }
 
       const DRIVER_RESULT = await createDriverSV(_req.body, _req.police._id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'DRIVER004').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'DRIVERE004').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Conductor creado exitosamente', DRIVER_RESULT, 'DRIVER001');
+      return CC_RESPONSE.send('Conductor creado exitosamente', DRIVER_RESULT, 'DRIVERS001');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'DRIVER004', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'DRIVERE004', _error).server() : _error);
     }
   },
 
@@ -59,12 +59,12 @@ module.exports = {
       };
 
       const RESULT = await getDriversSV(FILTERS, parseInt(page), parseInt(limit)).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'DRIVER005').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'DRIVERE005').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Conductores obtenidos exitosamente', RESULT, 'DRIVER002');
+      return CC_RESPONSE.send('Conductores obtenidos exitosamente', RESULT, 'DRIVERS002');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'DRIVER005', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'DRIVERE005', _error).server() : _error);
     }
   },
 
@@ -79,12 +79,12 @@ module.exports = {
     try {
       const { id } = _req.params;
       const DRIVER_RESULT = await getDriverByIdSV(_id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'DRIVER006').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'DRIVERE006').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Conductor obtenido exitosamente', DRIVER_RESULT, 'DRIVER003');
+      return CC_RESPONSE.send('Conductor obtenido exitosamente', DRIVER_RESULT, 'DRIVERS003');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'DRIVER006', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'DRIVERE006', _error).server() : _error);
     }
   },
 
@@ -99,12 +99,12 @@ module.exports = {
     try {
       const { idCard } = _req.params;
       const DRIVER_RESULT = await getDriverByIdCardSV(idCard).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'DRIVER007').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'DRIVERE007').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Conductor obtenido exitosamente', DRIVER_RESULT, 'DRIVER004');
+      return CC_RESPONSE.send('Conductor obtenido exitosamente', DRIVER_RESULT, 'DRIVERS004');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'DRIVER007', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'DRIVERE007', _error).server() : _error);
     }
   },
 
@@ -121,12 +121,12 @@ module.exports = {
       const UPDATE_DATA = _req.body;
 
       const DRIVER_RESULT = await updateDriverSV(id, UPDATE_DATA, _req.police._id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'DRIVER008').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'DRIVERE008').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Conductor actualizado exitosamente', DRIVER_RESULT, 'DRIVER005');
+      return CC_RESPONSE.send('Conductor actualizado exitosamente', DRIVER_RESULT, 'DRIVERS005');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'DRIVER008', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'DRIVERE008', _error).server() : _error);
     }
   },
 
@@ -143,16 +143,16 @@ module.exports = {
       const { reason } = _req.body;
 
       if (!reason) {
-        throw new CmmErrorClass(__filename, 'DRIVER009', 'El motivo de suspensión es obligatorio').returnValidate();
+        throw new CmmErrorClass(__filename, 'DRIVERE009', 'El motivo de suspensión es obligatorio').returnValidate();
       }
 
       const DRIVER_RESULT = await suspendDriverSV(id, reason, _req.police._id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'DRIVER010').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'DRIVERE010').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Conductor suspendido exitosamente', DRIVER_RESULT, 'DRIVER006');
+      return CC_RESPONSE.send('Conductor suspendido exitosamente', DRIVER_RESULT, 'DRIVERS006');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'DRIVER010', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'DRIVERE010', _error).server() : _error);
     }
   },
 
@@ -167,12 +167,12 @@ module.exports = {
     try {
       const { id } = _req.params;
       const DRIVER_RESULT = await reactivateDriverSV(id, _req.police._id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'DRIVER011').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'DRIVERE011').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Conductor reactivado exitosamente', DRIVER_RESULT, 'DRIVER007');
+      return CC_RESPONSE.send('Conductor reactivado exitosamente', DRIVER_RESULT, 'DRIVERS007');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'DRIVER011', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'DRIVERE011', _error).server() : _error);
     }
   },
 
@@ -187,12 +187,12 @@ module.exports = {
     try {
       const { id } = _req.params;
       const RESULT = await deleteDriverSV(id, _req.police._id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'DRIVER012').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'DRIVERE012').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send(RESULT.message, null, 'DRIVER008');
+      return CC_RESPONSE.send(RESULT.message, null, 'DRIVERS008');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'DRIVER012', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'DRIVERE012', _error).server() : _error);
     }
   },
 
@@ -206,12 +206,12 @@ module.exports = {
     const CC_RESPONSE = new CmmHttpRespClass(_req, _res);
     try {
       const STATISTICS_RESULT = await getDriversStatisticsSV().catch((_error) => {
-        throw new CmmErrorClass(__filename, 'DRIVER013').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'DRIVERE013').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Estadísticas obtenidas exitosamente', STATISTICS_RESULT, 'DRIVER009');
+      return CC_RESPONSE.send('Estadísticas obtenidas exitosamente', STATISTICS_RESULT, 'DRIVERS009');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'DRIVER013', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'DRIVERE013', _error).server() : _error);
     }
   },
 
@@ -227,16 +227,16 @@ module.exports = {
       const { term } = _req.query;
 
       if (!term || term.length < 2) {
-        throw new CmmErrorClass(__filename, 'DRIVER014', 'El término de búsqueda debe tener al menos 2 caracteres').returnValidate();
+        throw new CmmErrorClass(__filename, 'DRIVERE014', 'El término de búsqueda debe tener al menos 2 caracteres').returnValidate();
       }
 
       const DRIVERS_RESULT = await searchDriversSV(term).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'DRIVER015').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'DRIVERE015').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Búsqueda completada exitosamente', DRIVERS_RESULT, 'DRIVER010');
+      return CC_RESPONSE.send('Búsqueda completada exitosamente', DRIVERS_RESULT, 'DRIVERS010');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'DRIVER015', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'DRIVERE015', _error).server() : _error);
     }
   },
 
@@ -251,12 +251,12 @@ module.exports = {
     try {
       const { id } = _req.params;
       const EXPIRED_RESULT = await checkExpiredLicenseSV(id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'DRIVER016').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'DRIVERE016').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Verificación completada exitosamente', { license_expired: EXPIRED_RESULT }, 'DRIVER011');
+      return CC_RESPONSE.send('Verificación completada exitosamente', { license_expired: EXPIRED_RESULT }, 'DRIVERS011');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'DRIVER016', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'DRIVERE016', _error).server() : _error);
     }
   }
 };

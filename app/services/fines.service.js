@@ -20,29 +20,29 @@ module.exports = {
     try {
       // Validar que la infracción existe
       const INFRACTION_EXISTS = await INFRACTION_MODEL.findById(_fineData.infractionId).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'FINE001', _error).database();
+        throw new CmmErrorClass(__filename, 'FINEE001', _error).database();
       });
 
       if (!INFRACTION_EXISTS) {
-        throw new CmmErrorClass(__filename, 'FINE002', 'Infracción no encontrada').frontend();
+        throw new CmmErrorClass(__filename, 'FINEE002', 'Infracción no encontrada').frontend();
       }
 
       // Validar que el conductor existe
       const DRIVER_EXISTS = await DRIVER_MODEL.findOne({ idCard: _fineData.driverIdCard }).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'FINE003', _error).database();
+        throw new CmmErrorClass(__filename, 'FINEE003', _error).database();
       });
 
       if (!DRIVER_EXISTS) {
-        throw new CmmErrorClass(__filename, 'FINE004', 'Conductor no encontrado').frontend();
+        throw new CmmErrorClass(__filename, 'FINEE004', 'Conductor no encontrado').frontend();
       }
 
       // Validar que el vehículo existe
       const VEHICLE_EXISTS = await VEHICLE_MODEL.findOne({ plate: _fineData.vehiclePlate }).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'FINE005', _error).database();
+        throw new CmmErrorClass(__filename, 'FINEE005', _error).database();
       });
 
       if (!VEHICLE_EXISTS) {
-        throw new CmmErrorClass(__filename, 'FINE006', 'Vehículo no encontrado').frontend();
+        throw new CmmErrorClass(__filename, 'FINEE006', 'Vehículo no encontrado').frontend();
       }
 
       // Generar número de multa único
@@ -59,12 +59,12 @@ module.exports = {
       };
 
       const FINE_RESULT = await FINE_MODEL.create(FINE_DATA).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'FINE007', _error).database();
+        throw new CmmErrorClass(__filename, 'FINEE007', _error).database();
       });
 
       return FINE_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'FINE008', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'FINEE008', _error).server() : _error;
     }
   },
 
@@ -102,11 +102,11 @@ module.exports = {
         .skip(SKIP)
         .limit(_limit)
         .catch((_error) => {
-          throw new CmmErrorClass(__filename, 'FINE009', _error).database();
+          throw new CmmErrorClass(__filename, 'FINEE009', _error).database();
         });
 
       const TOTAL_COUNT = await FINE_MODEL.countDocuments(WHERE).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'FINE010', _error).database();
+        throw new CmmErrorClass(__filename, 'FINEE010', _error).database();
       });
 
       return {
@@ -119,7 +119,7 @@ module.exports = {
         }
       };
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'FINE011', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'FINEE011', _error).server() : _error;
     }
   },
 
@@ -136,16 +136,16 @@ module.exports = {
         .populate('vehicle')
         .populate('officer')
         .catch((_error) => {
-          throw new CmmErrorClass(__filename, 'FINE012', _error).database();
+          throw new CmmErrorClass(__filename, 'FINEE012', _error).database();
         });
 
       if (!FINE_RESULT) {
-        throw new CmmErrorClass(__filename, 'FINE013', 'Multa no encontrada').frontend();
+        throw new CmmErrorClass(__filename, 'FINEE013', 'Multa no encontrada').frontend();
       }
 
       return FINE_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'FINE014', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'FINEE014', _error).server() : _error;
     }
   },
 
@@ -159,16 +159,16 @@ module.exports = {
   async updateFineSV(_id, _updateData, _officerId) {
     try {
       const FINE_EXISTS = await FINE_MODEL.findById(_id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'FINE015', _error).database();
+        throw new CmmErrorClass(__filename, 'FINEE015', _error).database();
       });
 
       if (!FINE_EXISTS) {
-        throw new CmmErrorClass(__filename, 'FINE016', 'Multa no encontrada').frontend();
+        throw new CmmErrorClass(__filename, 'FINEE016', 'Multa no encontrada').frontend();
       }
 
       // Solo se puede actualizar si es borrador o si es el mismo oficial
       if (FINE_EXISTS.status !== 'DRAFT' && FINE_EXISTS.officer.toString() !== _officerId) {
-        throw new CmmErrorClass(__filename, 'FINE017', 'No tiene permisos para actualizar esta multa').frontend();
+        throw new CmmErrorClass(__filename, 'FINEE017', 'No tiene permisos para actualizar esta multa').frontend();
       }
 
       const UPDATE_DATA = {
@@ -182,12 +182,12 @@ module.exports = {
         .populate('vehicle')
         .populate('officer')
         .catch((_error) => {
-          throw new CmmErrorClass(__filename, 'FINE018', _error).database();
+          throw new CmmErrorClass(__filename, 'FINEE018', _error).database();
         });
 
       return FINE_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'FINE019', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'FINEE019', _error).server() : _error;
     }
   },
 
@@ -200,19 +200,19 @@ module.exports = {
   async sendFineSV(_id, _officerId) {
     try {
       const FINE_EXISTS = await FINE_MODEL.findById(_id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'FINE020', _error).database();
+        throw new CmmErrorClass(__filename, 'FINEE020', _error).database();
       });
 
       if (!FINE_EXISTS) {
-        throw new CmmErrorClass(__filename, 'FINE021', 'Multa no encontrada').frontend();
+        throw new CmmErrorClass(__filename, 'FINEE021', 'Multa no encontrada').frontend();
       }
 
       if (FINE_EXISTS.status !== 'DRAFT') {
-        throw new CmmErrorClass(__filename, 'FINE022', 'Solo se pueden enviar multas en estado borrador').frontend();
+        throw new CmmErrorClass(__filename, 'FINEE022', 'Solo se pueden enviar multas en estado borrador').frontend();
       }
 
       if (FINE_EXISTS.officer.toString() !== _officerId) {
-        throw new CmmErrorClass(__filename, 'FINE023', 'No tiene permisos para enviar esta multa').frontend();
+        throw new CmmErrorClass(__filename, 'FINEE023', 'No tiene permisos para enviar esta multa').frontend();
       }
 
       const FINE_RESULT = await FINE_MODEL.findByIdAndUpdate(_id, 
@@ -227,7 +227,7 @@ module.exports = {
        .populate('vehicle')
        .populate('officer')
        .catch((_error) => {
-         throw new CmmErrorClass(__filename, 'FINE024', _error).database();
+         throw new CmmErrorClass(__filename, 'FINEE024', _error).database();
        });
 
       // Aquí se podría enviar notificación por email al conductor
@@ -235,7 +235,7 @@ module.exports = {
 
       return FINE_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'FINE025', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'FINEE025', _error).server() : _error;
     }
   },
 
@@ -249,19 +249,19 @@ module.exports = {
   async cancelFineSV(_id, _reason, _officerId) {
     try {
       const FINE_EXISTS = await FINE_MODEL.findById(_id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'FINE026', _error).database();
+        throw new CmmErrorClass(__filename, 'FINEE026', _error).database();
       });
 
       if (!FINE_EXISTS) {
-        throw new CmmErrorClass(__filename, 'FINE027', 'Multa no encontrada').frontend();
+        throw new CmmErrorClass(__filename, 'FINEE027', 'Multa no encontrada').frontend();
       }
 
       if (FINE_EXISTS.status === 'CANCELLED') {
-        throw new CmmErrorClass(__filename, 'FINE028', 'La multa ya está anulada').frontend();
+        throw new CmmErrorClass(__filename, 'FINEE028', 'La multa ya está anulada').frontend();
       }
 
       if (FINE_EXISTS.status === 'PAID') {
-        throw new CmmErrorClass(__filename, 'FINE029', 'No se puede anular una multa ya pagada').frontend();
+        throw new CmmErrorClass(__filename, 'FINEE029', 'No se puede anular una multa ya pagada').frontend();
       }
 
       const FINE_RESULT = await FINE_MODEL.findByIdAndUpdate(_id, 
@@ -278,12 +278,12 @@ module.exports = {
        .populate('vehicle')
        .populate('officer')
        .catch((_error) => {
-         throw new CmmErrorClass(__filename, 'FINE030', _error).database();
+         throw new CmmErrorClass(__filename, 'FINEE030', _error).database();
        });
 
       return FINE_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'FINE031', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'FINEE031', _error).server() : _error;
     }
   },
 
@@ -326,7 +326,7 @@ module.exports = {
           }
         }
       ]).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'FINE032', _error).database();
+        throw new CmmErrorClass(__filename, 'FINEE032', _error).database();
       });
 
       return STATISTICS_RESULT[0] || {
@@ -336,7 +336,7 @@ module.exports = {
         totalRevenue: 0
       };
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'FINE033', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'FINEE033', _error).server() : _error;
     }
   },
 
@@ -355,7 +355,7 @@ module.exports = {
       const LAST_FINE = await FINE_MODEL.findOne({
         fineNumber: { $regex: `^${PREFIX}` }
       }).sort({ fineNumber: -1 }).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'FINE034', _error).database();
+        throw new CmmErrorClass(__filename, 'FINEE034', _error).database();
       });
 
       let SEQUENCE = 1;
@@ -366,7 +366,7 @@ module.exports = {
 
       return `${PREFIX}-${String(SEQUENCE).padStart(4, '0')}`;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'FINE035', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'FINEE035', _error).server() : _error;
     }
   }
 };

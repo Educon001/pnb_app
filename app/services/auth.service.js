@@ -18,25 +18,25 @@ module.exports = {
     try {
       // Buscar policía por username
       const POLICE_RESULT = await POLICE_MODEL.findOne({ username: _username }).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'AUTH001', _error).database();
+        throw new CmmErrorClass(__filename, 'AUTHE001', _error).database();
       });
 
       if (!POLICE_RESULT) {
-        throw new CmmErrorClass(__filename, 'AUTH002', 'Credenciales inválidas').frontend();
+        throw new CmmErrorClass(__filename, 'AUTHE002', 'Credenciales inválidas').frontend();
       }
 
       // Verificar contraseña
       const PASSWORD_VALID = await bcrypt.compare(_password, POLICE_RESULT.password).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'AUTH003', _error).server();
+        throw new CmmErrorClass(__filename, 'AUTHE003', _error).server();
       });
 
       if (!PASSWORD_VALID) {
-        throw new CmmErrorClass(__filename, 'AUTH004', 'Credenciales inválidas').frontend();
+        throw new CmmErrorClass(__filename, 'AUTHE004', 'Credenciales inválidas').frontend();
       }
 
       // Verificar que el policía esté activo
       if (!POLICE_RESULT.active) {
-        throw new CmmErrorClass(__filename, 'AUTH005', 'Cuenta desactivada').frontend();
+        throw new CmmErrorClass(__filename, 'AUTHE005', 'Cuenta desactivada').frontend();
       }
 
       // Generar token JWT
@@ -55,7 +55,7 @@ module.exports = {
         lastLogin: new Date(),
         updatedAt: new Date()
       }).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'AUTH006', _error).database();
+        throw new CmmErrorClass(__filename, 'AUTHE006', _error).database();
       });
 
       return {
@@ -69,11 +69,13 @@ module.exports = {
           badgeNumber: POLICE_RESULT.badgeNumber,
           roles: POLICE_RESULT.roles,
           email: POLICE_RESULT.email,
-          phone: POLICE_RESULT.phone
+          phone: POLICE_RESULT.phone,
+          rank: POLICE_RESULT.rank,
+          department: POLICE_RESULT.department,
         }
       };
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'AUTH007', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'AUTHE007', _error).server() : _error;
     }
   },
 
@@ -91,12 +93,12 @@ module.exports = {
         lastLogout: new Date(),
         updatedAt: new Date()
       }).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'AUTH008', _error).database();
+        throw new CmmErrorClass(__filename, 'AUTHE008', _error).database();
       });
 
       return { message: 'Sesión cerrada exitosamente' };
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'AUTH009', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'AUTHE009', _error).server() : _error;
     }
   },
 
@@ -110,16 +112,16 @@ module.exports = {
       const PROFILE_RESULT = await POLICE_MODEL.findById(_policeId)
         .select('-password')
         .catch((_error) => {
-          throw new CmmErrorClass(__filename, 'AUTH010', _error).database();
+          throw new CmmErrorClass(__filename, 'AUTHE010', _error).database();
         });
 
       if (!PROFILE_RESULT) {
-        throw new CmmErrorClass(__filename, 'AUTH011', 'Policía no encontrado').frontend();
+        throw new CmmErrorClass(__filename, 'AUTHE011', 'Policía no encontrado').frontend();
       }
 
       return PROFILE_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'AUTH012', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'AUTHE012', _error).server() : _error;
     }
   },
 
@@ -132,11 +134,11 @@ module.exports = {
   async updateProfileSV(_policeId, _updateData) {
     try {
       const POLICE_EXISTS = await POLICE_MODEL.findById(_policeId).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'AUTH013', _error).database();
+        throw new CmmErrorClass(__filename, 'AUTHE013', _error).database();
       });
 
       if (!POLICE_EXISTS) {
-        throw new CmmErrorClass(__filename, 'AUTH014', 'Policía no encontrado').frontend();
+        throw new CmmErrorClass(__filename, 'AUTHE014', 'Policía no encontrado').frontend();
       }
 
       // Verificar si el nuevo email ya existe en otro policía
@@ -145,11 +147,11 @@ module.exports = {
           email: _updateData.email,
           _id: { $ne: _policeId }
         }).catch((_error) => {
-          throw new CmmErrorClass(__filename, 'AUTH015', _error).database();
+          throw new CmmErrorClass(__filename, 'AUTHE015', _error).database();
         });
 
         if (EXISTING_EMAIL) {
-          throw new CmmErrorClass(__filename, 'AUTH016', 'Ya existe un policía con este email').frontend();
+          throw new CmmErrorClass(__filename, 'AUTHE016', 'Ya existe un policía con este email').frontend();
         }
       }
 
@@ -161,12 +163,12 @@ module.exports = {
       const PROFILE_RESULT = await POLICE_MODEL.findByIdAndUpdate(_policeId, UPDATE_DATA, { new: true })
         .select('-password')
         .catch((_error) => {
-          throw new CmmErrorClass(__filename, 'AUTH017', _error).database();
+          throw new CmmErrorClass(__filename, 'AUTHE017', _error).database();
         });
 
       return PROFILE_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'AUTH018', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'AUTHE018', _error).server() : _error;
     }
   },
 
@@ -180,11 +182,11 @@ module.exports = {
   async changePasswordSV(_policeId, _currentPassword, _newPassword) {
     try {
       const POLICE_RESULT = await POLICE_MODEL.findById(_policeId).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'AUTH019', _error).database();
+        throw new CmmErrorClass(__filename, 'AUTHE019', _error).database();
       });
 
       if (!POLICE_RESULT) {
-        throw new CmmErrorClass(__filename, 'AUTH020', 'Policía no encontrado').frontend();
+        throw new CmmErrorClass(__filename, 'AUTHE020', 'Policía no encontrado').frontend();
       }
 
       // Verificar contraseña actual

@@ -16,20 +16,20 @@ module.exports = {
     try {
       // Verificar si ya existe un conductor con esta cédula
       const EXISTING_DRIVER = await DRIVER_MODEL.findOne({ idCard: _driverData.idCard }).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'DRIVER001', _error).database();
+        throw new CmmErrorClass(__filename, 'DRIVERE001', _error).database();
       });
 
       if (EXISTING_DRIVER) {
-        throw new CmmErrorClass(__filename, 'DRIVER002', 'Ya existe un conductor con esta cédula').frontend();
+        throw new CmmErrorClass(__filename, 'DRIVERE002', 'Ya existe un conductor con esta cédula').frontend();
       }
 
       // Verificar si ya existe un conductor con este número de licencia
       const EXISTING_LICENSE = await DRIVER_MODEL.findOne({ licenseNumber: _driverData.licenseNumber }).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'DRIVER003', _error).database();
+        throw new CmmErrorClass(__filename, 'DRIVERE003', _error).database();
       });
 
       if (EXISTING_LICENSE) {
-        throw new CmmErrorClass(__filename, 'DRIVER004', 'Ya existe un conductor con este número de licencia').frontend();
+        throw new CmmErrorClass(__filename, 'DRIVERE004', 'Ya existe un conductor con este número de licencia').frontend();
       }
 
       const DRIVER_DATA = {
@@ -39,12 +39,12 @@ module.exports = {
       };
 
       const DRIVER_RESULT = await DRIVER_MODEL.create(DRIVER_DATA).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'DRIVER005', _error).database();
+        throw new CmmErrorClass(__filename, 'DRIVERE005', _error).database();
       });
 
       return DRIVER_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'DRIVER006', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'DRIVERE006', _error).server() : _error;
     }
   },
 
@@ -79,11 +79,11 @@ module.exports = {
         .skip(SKIP)
         .limit(_limit)
         .catch((_error) => {
-          throw new CmmErrorClass(__filename, 'DRIVER007', _error).database();
+          throw new CmmErrorClass(__filename, 'DRIVERE007', _error).database();
         });
 
       const TOTAL_COUNT = await DRIVER_MODEL.countDocuments(WHERE).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'DRIVER008', _error).database();
+        throw new CmmErrorClass(__filename, 'DRIVERE008', _error).database();
       });
 
       return {
@@ -96,7 +96,7 @@ module.exports = {
         }
       };
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'DRIVER009', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'DRIVERE009', _error).server() : _error;
     }
   },
 
@@ -108,16 +108,16 @@ module.exports = {
   async getDriverByIdSV(_id) {
     try {
       const DRIVER_RESULT = await DRIVER_MODEL.findById(_id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'DRIVER010', _error).database();
+        throw new CmmErrorClass(__filename, 'DRIVERE010', _error).database();
       });
 
       if (!DRIVER_RESULT) {
-        throw new CmmErrorClass(__filename, 'DRIVER011', 'Conductor no encontrado').frontend();
+        throw new CmmErrorClass(__filename, 'DRIVERE011', 'Conductor no encontrado').frontend();
       }
 
       return DRIVER_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'DRIVER012', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'DRIVERE012', _error).server() : _error;
     }
   },
 
@@ -129,16 +129,16 @@ module.exports = {
   async getDriverByIdCardSV(_idCard) {
     try {
       const DRIVER_RESULT = await DRIVER_MODEL.findOne({ idCard: _idCard }).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'DRIVER013', _error).database();
+        throw new CmmErrorClass(__filename, 'DRIVERE013', _error).database();
       });
 
       if (!DRIVER_RESULT) {
-        throw new CmmErrorClass(__filename, 'DRIVER014', 'Conductor no encontrado').frontend();
+        throw new CmmErrorClass(__filename, 'DRIVERE014', 'Conductor no encontrado').frontend();
       }
 
       return DRIVER_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'DRIVER015', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'DRIVERE015', _error).server() : _error;
     }
   },
 
@@ -152,11 +152,11 @@ module.exports = {
   async updateDriverSV(_id, _updateData, _officerId) {
     try {
       const DRIVER_EXISTS = await DRIVER_MODEL.findById(_id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'DRIVER016', _error).database();
+        throw new CmmErrorClass(__filename, 'DRIVERE016', _error).database();
       });
 
       if (!DRIVER_EXISTS) {
-        throw new CmmErrorClass(__filename, 'DRIVER017', 'Conductor no encontrado').frontend();
+        throw new CmmErrorClass(__filename, 'DRIVERE017', 'Conductor no encontrado').frontend();
       }
 
       // Verificar si la nueva cédula ya existe en otro conductor
@@ -165,11 +165,11 @@ module.exports = {
           idCard: _updateData.idCard,
           _id: { $ne: _id }
         }).catch((_error) => {
-          throw new CmmErrorClass(__filename, 'DRIVER018', _error).database();
+          throw new CmmErrorClass(__filename, 'DRIVERE018', _error).database();
         });
 
         if (EXISTING_DRIVER) {
-          throw new CmmErrorClass(__filename, 'DRIVER019', 'Ya existe un conductor con esta cédula').frontend();
+          throw new CmmErrorClass(__filename, 'DRIVERE019', 'Ya existe un conductor con esta cédula').frontend();
         }
       }
 
@@ -179,11 +179,11 @@ module.exports = {
           licenseNumber: _updateData.licenseNumber,
           _id: { $ne: _id }
         }).catch((_error) => {
-          throw new CmmErrorClass(__filename, 'DRIVER020', _error).database();
+          throw new CmmErrorClass(__filename, 'DRIVERE020', _error).database();
         });
 
         if (EXISTING_LICENSE) {
-          throw new CmmErrorClass(__filename, 'DRIVER021', 'Ya existe un conductor con este número de licencia').frontend();
+          throw new CmmErrorClass(__filename, 'DRIVERE021', 'Ya existe un conductor con este número de licencia').frontend();
         }
       }
 
@@ -193,12 +193,12 @@ module.exports = {
       };
 
       const DRIVER_RESULT = await DRIVER_MODEL.findByIdAndUpdate(_id, UPDATE_DATA, { new: true }).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'DRIVER022', _error).database();
+        throw new CmmErrorClass(__filename, 'DRIVERE022', _error).database();
       });
 
       return DRIVER_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'DRIVER023', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'DRIVERE023', _error).server() : _error;
     }
   },
 
@@ -212,15 +212,15 @@ module.exports = {
   async suspendDriverSV(_id, _reason, _officerId) {
     try {
       const DRIVER_EXISTS = await DRIVER_MODEL.findById(_id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'DRIVER024', _error).database();
+        throw new CmmErrorClass(__filename, 'DRIVERE024', _error).database();
       });
 
       if (!DRIVER_EXISTS) {
-        throw new CmmErrorClass(__filename, 'DRIVER025', 'Conductor no encontrado').frontend();
+        throw new CmmErrorClass(__filename, 'DRIVERE025', 'Conductor no encontrado').frontend();
       }
 
       if (DRIVER_EXISTS.suspended) {
-        throw new CmmErrorClass(__filename, 'DRIVER026', 'El conductor ya está suspendido').frontend();
+        throw new CmmErrorClass(__filename, 'DRIVERE026', 'El conductor ya está suspendido').frontend();
       }
 
       const DRIVER_RESULT = await DRIVER_MODEL.findByIdAndUpdate(_id, 
@@ -233,12 +233,12 @@ module.exports = {
         }, 
         { new: true }
       ).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'DRIVER027', _error).database();
+        throw new CmmErrorClass(__filename, 'DRIVERE027', _error).database();
       });
 
       return DRIVER_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'DRIVER028', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'DRIVERE028', _error).server() : _error;
     }
   },
 
@@ -251,11 +251,11 @@ module.exports = {
   async reactivateDriverSV(_id, _officerId) {
     try {
       const DRIVER_EXISTS = await DRIVER_MODEL.findById(_id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'DRIVER029', _error).database();
+        throw new CmmErrorClass(__filename, 'DRIVERE029', _error).database();
       });
 
       if (!DRIVER_EXISTS) {
-        throw new CmmErrorClass(__filename, 'DRIVER030', 'Conductor no encontrado').frontend();
+        throw new CmmErrorClass(__filename, 'DRIVERE030', 'Conductor no encontrado').frontend();
       }
 
       if (!DRIVER_EXISTS.suspended) {

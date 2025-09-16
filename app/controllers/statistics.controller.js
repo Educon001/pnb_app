@@ -29,12 +29,12 @@ module.exports = {
       }
 
       const STATISTICS_RESULT = await getGeneralStatisticsSV(FILTERS).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'STATISTICS001').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'STATISTICSE001').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Estadísticas generales obtenidas exitosamente', STATISTICS_RESULT, 'STATISTICS001');
+      return CC_RESPONSE.send('Estadísticas generales obtenidas exitosamente', STATISTICS_RESULT, 'STATISTICSS001');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'STATISTICS001', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'STATISTICSE001', _error).server() : _error);
     }
   },
 
@@ -61,12 +61,12 @@ module.exports = {
       }
 
       const STATISTICS_RESULT = await getStatisticsByPeriodSV(FILTERS).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'STATISTICS002').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'STATISTICSE002').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Estadísticas por período obtenidas exitosamente', STATISTICS_RESULT, 'STATISTICS002');
+      return CC_RESPONSE.send('Estadísticas por período obtenidas exitosamente', STATISTICS_RESULT, 'STATISTICSS002');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'STATISTICS002', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'STATISTICSE002', _error).server() : _error);
     }
   },
 
@@ -87,12 +87,12 @@ module.exports = {
       };
 
       const STATISTICS_RESULT = await getPerformanceStatisticsSV(FILTERS).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'STATISTICS003').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'STATISTICSE003').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Estadísticas de rendimiento obtenidas exitosamente', STATISTICS_RESULT, 'STATISTICS003');
+      return CC_RESPONSE.send('Estadísticas de rendimiento obtenidas exitosamente', STATISTICS_RESULT, 'STATISTICSS003');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'STATISTICS003', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'STATISTICSE003', _error).server() : _error);
     }
   },
 
@@ -119,12 +119,12 @@ module.exports = {
       }
 
       const STATISTICS_RESULT = await getMostCommonInfractionsSV(FILTERS).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'STATISTICS004').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'STATISTICSE004').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Infracciones más comunes obtenidas exitosamente', STATISTICS_RESULT, 'STATISTICS004');
+      return CC_RESPONSE.send('Infracciones más comunes obtenidas exitosamente', STATISTICS_RESULT, 'STATISTICSS004');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'STATISTICS004', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'STATISTICSE004', _error).server() : _error);
     }
   },
 
@@ -151,12 +151,12 @@ module.exports = {
       }
 
       const STATISTICS_RESULT = await getMostFrequentLocationsSV(FILTERS).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'STATISTICS005').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'STATISTICSE005').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Ubicaciones más frecuentes obtenidas exitosamente', STATISTICS_RESULT, 'STATISTICS005');
+      return CC_RESPONSE.send('Ubicaciones más frecuentes obtenidas exitosamente', STATISTICS_RESULT, 'STATISTICSS005');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'STATISTICS005', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'STATISTICSE005', _error).server() : _error);
     }
   },
 
@@ -183,12 +183,12 @@ module.exports = {
       }
 
       const STATISTICS_RESULT = await getMostFinedVehiclesSV(FILTERS).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'STATISTICS006').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'STATISTICSE006').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Vehículos más multados obtenidos exitosamente', STATISTICS_RESULT, 'STATISTICS006');
+      return CC_RESPONSE.send('Vehículos más multados obtenidos exitosamente', STATISTICS_RESULT, 'STATISTICSS006');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'STATISTICS006', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'STATISTICSE006', _error).server() : _error);
     }
   },
 
@@ -207,12 +207,12 @@ module.exports = {
         : null;
 
       const SUMMARY_RESULT = await getDashboardSummarySV(OFFICER_ID).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'STATISTICS007').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'STATISTICSE007').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Resumen del dashboard obtenido exitosamente', SUMMARY_RESULT, 'STATISTICS007');
+      return CC_RESPONSE.send('Resumen del dashboard obtenido exitosamente', SUMMARY_RESULT, 'STATISTICSS007');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'STATISTICS007', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'STATISTICSE007', _error).server() : _error);
     }
   },
 
@@ -239,16 +239,16 @@ module.exports = {
       }
 
       const STATISTICS_RESULT = await getGeneralStatisticsSV(FILTERS).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'STATISTICS008').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'STATISTICSE008').parseCatch(_error);
       });
 
       return CC_RESPONSE.send('Estadísticas por estado obtenidas exitosamente', {
         by_status: STATISTICS_RESULT.by_severity,
         total_fines: STATISTICS_RESULT.fines.total,
         total_revenue: STATISTICS_RESULT.fines.total_revenue
-      }, 'STATISTICS008');
+      }, 'STATISTICSS008');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'STATISTICS008', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'STATISTICSE008', _error).server() : _error);
     }
   },
 
@@ -275,12 +275,12 @@ module.exports = {
       }
 
       const STATISTICS_RESULT = await getRevenueStatisticsSV(FILTERS).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'STATISTICS009').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'STATISTICSE009').parseCatch(_error);
       });
 
-      return CC_RESPONSE.send('Estadísticas de recaudación obtenidas exitosamente', STATISTICS_RESULT, 'STATISTICS009');
+      return CC_RESPONSE.send('Estadísticas de recaudación obtenidas exitosamente', STATISTICS_RESULT, 'STATISTICSS009');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'STATISTICS009', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'STATISTICSE009', _error).server() : _error);
     }
   }
 };
