@@ -95,7 +95,8 @@ module.exports = {
         officer: `${FINE_WITH_POPULATE.officer.firstName} ${FINE_WITH_POPULATE.officer.lastName}`,
         officerId: FINE_WITH_POPULATE.officer.idCard,
         paymentDeadline: formatDateSV(new Date(Date.now() + 15 * 24 * 60 * 60 * 1000)), // 15 días
-        reconsiderationDeadline: formatDateSV(new Date(Date.now() + 5 * 24 * 60 * 60 * 1000)) // 5 días
+        reconsiderationDeadline: formatDateSV(new Date(Date.now() + 5 * 24 * 60 * 60 * 1000)), // 5 días,
+        paymentGatewayUrl: 'https://sandbox-payments.pagochinchin.com/68c9dcbe91bcba6abf5c2e49/aHR0cHM6Ly93Ny5wbmd3aW5nLmNvbS9wbmdzLzg2Ni81NC9wbmctdHJhbnNwYXJlbnQtZW1vamktc2FkbmVzcy1lbW90aWNvbi1zbWlsZXktc2FkLWVtb2ppLWNyeWluZy1pbW9qaS1mYWNlLXN0aWNrZXItZGVza3RvcC13YWxscGFwZXItdGh1bWJuYWlsLnBuZw%3D%3D'
       };
 
 

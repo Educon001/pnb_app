@@ -195,7 +195,7 @@ module.exports = {
 
               <!-- Footer -->
               <div class="footer">
-                  <a href="{{footerHref}}" class="footer-btn">REALIZAR PAGO</a>
+                  <a href="{{paymentGatewayUrl}}" class="footer-btn">REALIZAR PAGO</a>
               </div>
             </div>
           </body>
