@@ -15,6 +15,19 @@ const { sendFineMailSV } = require('./mail.service');
 /* Constants */
 const TAX_UNIT_VALUE = 60; // Valor por unidad tributaria en bolívares
 
+/**
+ * @description Formatear fecha a formato DD/MM/YYYY
+ * @param {Date} _date - Fecha a formatear
+ * @returns {String} Fecha formateada
+ */
+const formatDateSV = (_date) => {
+  const DATE = new Date(_date);
+  const DAY = String(DATE.getDate()).padStart(2, '0');
+  const MONTH = String(DATE.getMonth() + 1).padStart(2, '0');
+  const YEAR = DATE.getFullYear();
+  return `${DAY}/${MONTH}/${YEAR}`;
+};
+
 module.exports = {
   /**
    * @description Crear nueva multa
@@ -85,7 +98,7 @@ module.exports = {
       // Preparar datos para el correo
       const MAIL_DATA = {
         fineId: FINE_WITH_POPULATE.fineNumber,
-        date: FINE_WITH_POPULATE.infractionDate || new Date().toLocaleDateString('es-VE'),
+        date: formatDateSV(FINE_WITH_POPULATE.infractionDate || new Date()),
         offense: FINE_WITH_POPULATE.infraction.name,
         article: FINE_WITH_POPULATE.infraction.article,
         plate: FINE_WITH_POPULATE.vehicle.plate,
@@ -94,8 +107,8 @@ module.exports = {
         amount: `Bs. ${CALCULATED_AMOUNT.toLocaleString('es-VE')}`,
         officer: `${FINE_WITH_POPULATE.officer.firstName} ${FINE_WITH_POPULATE.officer.lastName}`,
         officerId: FINE_WITH_POPULATE.officer.idCard,
-        paymentDeadline: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toLocaleDateString('es-VE'), // 15 días
-        reconsiderationDeadline: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toLocaleDateString('es-VE') // 5 días
+        paymentDeadline: formatDateSV(new Date(Date.now() + 15 * 24 * 60 * 60 * 1000)), // 15 días
+        reconsiderationDeadline: formatDateSV(new Date(Date.now() + 5 * 24 * 60 * 60 * 1000)) // 5 días
       };
 
 
@@ -269,11 +282,10 @@ module.exports = {
           throw new CmmErrorClass(__filename, 'FINEE024', _error).database();
         });
 
-      await sendFineMailSV([FINE_RESULT.driver.email], MAIL_DATA);
-
+      // Preparar datos para el correo
       const MAIL_DATA = {
         fineId: FINE_RESULT.fineNumber,
-        date: FINE_RESULT.infractionDate || new Date().toLocaleDateString('es-VE'),
+        date: formatDateSV(FINE_RESULT.infractionDate || new Date()),
         offense: FINE_RESULT.infraction.name,
         article: FINE_RESULT.infraction.article,
         plate: FINE_RESULT.vehicle.plate,
@@ -282,7 +294,11 @@ module.exports = {
         amount: `Bs. ${FINE_RESULT.amount.toLocaleString('es-VE')}`,
         officer: `${FINE_RESULT.officer.firstName} ${FINE_RESULT.officer.lastName}`,
         officerId: FINE_RESULT.officer.idCard,
+        paymentDeadline: formatDateSV(new Date(Date.now() + 15 * 24 * 60 * 60 * 1000)), // 15 días
+        reconsiderationDeadline: formatDateSV(new Date(Date.now() + 5 * 24 * 60 * 60 * 1000)) // 5 días
       };
+
+      await sendFineMailSV([FINE_RESULT.driver.email], MAIL_DATA);
 
       return FINE_RESULT;
     } catch (_error) {
