@@ -17,29 +17,29 @@ const {
 const createFineFVAL = () => {
   try {
     return [
-      // // Ubicación
-      // CmmObjectParam('location', 'body', true),
-      // CmmStringParam('infractionDate', 'body', { min: 10, max: 10 }, true),
-      // CmmStringParam('infractionTime', 'body', { min: 5, max: 5 }, true),
+      // Ubicación
+      CmmObjectParam('location', 'body', true),
+      CmmStringParam('infractionDate', 'body', { min: 10, max: 10 }, true),
+      CmmStringParam('infractionTime', 'body', { min: 5, max: 5 }, true),
       
-      // // Conductor
-      // CmmStringParam('driverIdCard', 'body', { min: 6, max: 15 }, true),
-      // CmmStringParam('driverFirstName', 'body', { min: 2, max: 50 }, true),
-      // CmmStringParam('driverLastName', 'body', { min: 2, max: 50 }, true),
-      // CmmStringParam('driverPhone', 'body', { min: 10, max: 15 }, false),
-      // CmmStringParam('driverEmail', 'body', { min: 6, max: 100 }, false),
-      // CmmStringParam('driverAddress', 'body', { min: 10, max: 500 }, false),
+      // Conductor
+      CmmStringParam('driverIdCard', 'body', { min: 6, max: 15 }, true),
+      CmmStringParam('driverFirstName', 'body', { min: 2, max: 50 }, true),
+      CmmStringParam('driverLastName', 'body', { min: 2, max: 50 }, true),
+      CmmStringParam('driverPhone', 'body', { min: 10, max: 15 }, false),
+      CmmStringParam('driverEmail', 'body', { min: 6, max: 100 }, false),
+      CmmStringParam('driverAddress', 'body', { min: 10, max: 500 }, false),
       
-      // // Vehículo
-      // CmmStringParam('vehiclePlate', 'body', { min: 6, max: 10 }, true, 'UPPER'),
-      // CmmStringParam('vehicleType', 'body', { min: 3, max: 50 }, true),
-      // CmmStringParam('vehicleBrand', 'body', { min: 2, max: 50 }, true),
-      // CmmStringParam('vehicleModel', 'body', { min: 2, max: 50 }, true),
-      // CmmStringParam('vehicleColor', 'body', { min: 2, max: 30 }, true),
-      // CmmStringParam('vehicleYear', 'body', { min: 4, max: 4 }, true),
+      // Vehículo
+      CmmStringParam('vehiclePlate', 'body', { min: 6, max: 10 }, true, 'UPPER'),
+      CmmStringParam('vehicleType', 'body', { min: 3, max: 50 }, true),
+      CmmStringParam('vehicleBrand', 'body', { min: 2, max: 50 }, true),
+      CmmStringParam('vehicleModel', 'body', { min: 2, max: 50 }, true),
+      CmmStringParam('vehicleColor', 'body', { min: 2, max: 30 }, true),
+      CmmStringParam('vehicleYear', 'body', { min: 4, max: 4 }, true),
       
-      // // Infracción y multa
-      // CmmStringParam('description', 'body', { min: 10, max: 1000 }, true)
+      // Infracción y multa
+      CmmStringParam('description', 'body', { min: 10, max: 1000 }, true)
     ];
   } catch (_error) {
     throw !_error.errorType ? new CmmErrorClass(__filename, 'FINES001', _error).server() : _error;

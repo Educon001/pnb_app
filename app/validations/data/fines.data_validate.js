@@ -1,6 +1,7 @@
 'use strict';
 
 const { CmmErrorClass, CmmHttpRespClass, CmmExpressValClass } = require('../../utils');
+const { parseDateSV } = require('../../utils/date.utils');
 
 /**
  * @description Validaciones de datos para crear multa completa
@@ -23,11 +24,23 @@ const createFineDVAL = async (_req, _res, _next) => {
     } = _req.body;
     
     // Business validation logic
+    let PARSED_INFRACTION_DATE = null;
+    
+    // Convertir fecha si está presente
+    if (infractionDate) {
+      try {
+        PARSED_INFRACTION_DATE = parseDateSV(infractionDate);
+      } catch (_error) {
+        throw new CmmErrorClass(__filename, 'FINES032', _error.message).frontend();
+      }
+    }
     
     // Set validated data in request
     _req.CC = _req.CC || {};
     _req.CC.VALIDATED_DATA = { 
-      location, infractionDate, infractionTime,
+      location, 
+      infractionDate: PARSED_INFRACTION_DATE, 
+      infractionTime,
       driverIdCard, driverFirstName, driverLastName, driverPhone, driverEmail, driverAddress,
       vehiclePlate, vehicleType, vehicleBrand, vehicleModel, vehicleColor, vehicleYear,
       description

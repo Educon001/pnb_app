@@ -1,6 +1,6 @@
 'use strict';
 
-const { CmmErrorClass } = require('../utils');
+const { CmmErrorClass, formatDateSV } = require('../utils');
 
 /* Models */
 const FINE_MODEL = require('../models/fine.model');
@@ -14,19 +14,6 @@ const { sendFineMailSV } = require('./mail.service');
 
 /* Constants */
 const TAX_UNIT_VALUE = 60; // Valor por unidad tributaria en bolívares
-
-/**
- * @description Formatear fecha a formato DD/MM/YYYY
- * @param {Date} _date - Fecha a formatear
- * @returns {String} Fecha formateada
- */
-const formatDateSV = (_date) => {
-  const DATE = new Date(_date);
-  const DAY = String(DATE.getDate()).padStart(2, '0');
-  const MONTH = String(DATE.getMonth() + 1).padStart(2, '0');
-  const YEAR = DATE.getFullYear();
-  return `${DAY}/${MONTH}/${YEAR}`;
-};
 
 module.exports = {
   /**
