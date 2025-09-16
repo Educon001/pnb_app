@@ -24,55 +24,6 @@ const createFineDVAL = async (_req, _res, _next) => {
     
     // Business validation logic
     
-    // Validaciones de ubicación
-    if (location && typeof location === 'object') {
-      if (!location.address) {
-        throw new CmmErrorClass(__filename, 'FINES002', 'La dirección es obligatoria').frontend();
-      }
-      
-      if (location.coordinates) {
-        const { latitude, longitude } = location.coordinates;
-        if (latitude && (latitude < -90 || latitude > 90)) {
-          throw new CmmErrorClass(__filename, 'FINES003', 'Latitud debe estar entre -90 y 90').frontend();
-        }
-        if (longitude && (longitude < -180 || longitude > 180)) {
-          throw new CmmErrorClass(__filename, 'FINES004', 'Longitud debe estar entre -180 y 180').frontend();
-        }
-      }
-    }
-    
-    // Validaciones de fecha y hora
-    if (infractionDate && !/^\d{4}-\d{2}-\d{2}$/.test(infractionDate)) {
-      throw new CmmErrorClass(__filename, 'FINES005', 'Formato de fecha inválido. Use: YYYY-MM-DD').frontend();
-    }
-    
-    if (infractionTime && !/^\d{2}:\d{2}$/.test(infractionTime)) {
-      throw new CmmErrorClass(__filename, 'FINES006', 'Formato de hora inválido. Use: HH:MM').frontend();
-    }
-    
-    // Validaciones de conductor
-    if (driverIdCard && !/^[0-9]+$/.test(driverIdCard)) {
-      throw new CmmErrorClass(__filename, 'FINES007', 'La cédula debe contener solo números').frontend();
-    }
-
-    if (driverPhone && !/^[0-9+\-\s()]+$/.test(driverPhone)) {
-      throw new CmmErrorClass(__filename, 'FINES008', 'Formato de teléfono inválido').frontend();
-    }
-
-    if (driverEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(driverEmail)) {
-      throw new CmmErrorClass(__filename, 'FINES009', 'Formato de email inválido').frontend();
-    }
-
-    // Validaciones de vehículo
-    if (vehicleYear && (parseInt(vehicleYear) < 1900 || parseInt(vehicleYear) > new Date().getFullYear() + 1)) {
-      throw new CmmErrorClass(__filename, 'FINES010', 'Año del vehículo inválido').frontend();
-    }
-
-    const validVehicleTypes = ['AUTO', 'MOTO', 'CAMION', 'BUS', 'PICKUP', 'VAN'];
-    if (vehicleType && !validVehicleTypes.includes(vehicleType.toUpperCase())) {
-      throw new CmmErrorClass(__filename, 'FINES011', 'Tipo de vehículo no válido').frontend();
-    }
-    
     // Set validated data in request
     _req.CC = _req.CC || {};
     _req.CC.VALIDATED_DATA = { 
