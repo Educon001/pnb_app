@@ -69,8 +69,6 @@ const infractionsData = [
     severity: 'SERIOUS',
     vehicleType: 'ALL',
     taxUnits: 10,
-    bolivarValue: 600,
-    licensePoints: 5,
     requiresPhoto: true,
     requiresEvidence: true
   },
@@ -82,8 +80,6 @@ const infractionsData = [
     severity: 'SERIOUS',
     vehicleType: 'ALL',
     taxUnits: 10,
-    bolivarValue: 600,
-    licensePoints: 5,
     requiresPhoto: true,
     requiresEvidence: true
   },
@@ -95,8 +91,6 @@ const infractionsData = [
     severity: 'LIGHT',
     vehicleType: 'ALL',
     taxUnits: 5,
-    bolivarValue: 300,
-    licensePoints: 2,
     requiresPhoto: false,
     requiresEvidence: false
   },
@@ -108,8 +102,6 @@ const infractionsData = [
     severity: 'LESS_SERIOUS',
     vehicleType: 'ALL',
     taxUnits: 8,
-    bolivarValue: 480,
-    licensePoints: 3,
     requiresPhoto: true,
     requiresEvidence: true
   },
@@ -121,8 +113,6 @@ const infractionsData = [
     severity: 'LIGHT',
     vehicleType: 'ALL',
     taxUnits: 6,
-    bolivarValue: 360,
-    licensePoints: 1,
     requiresPhoto: true,
     requiresEvidence: false
   }

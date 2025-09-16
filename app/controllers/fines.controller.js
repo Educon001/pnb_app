@@ -16,12 +16,13 @@ module.exports = {
     const CC_RESPONSE = new CmmHttpRespClass(_req, _res);
     try {
       const FINE_RESULT = await createFineSV(_req.body, _req.police._id).catch((_error) => {
+        console.log(_error);
         throw new CmmErrorClass(__filename, 'FINEE001').parseCatch(_error);
       });
 
       return CC_RESPONSE.send('Multa creada exitosamente', FINE_RESULT, 'FINES001');
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'FINEE001', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'FINEE002', _error).server() : _error);
     }
   },
 

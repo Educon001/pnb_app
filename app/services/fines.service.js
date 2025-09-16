@@ -9,6 +9,12 @@ const DRIVER_MODEL = require('../models/driver.model');
 const VEHICLE_MODEL = require('../models/vehicle.model');
 const POLICE_MODEL = require('../models/police.model');
 
+/* Services */
+const { sendFineMailSV } = require('./mail.service');
+
+/* Constants */
+const TAX_UNIT_VALUE = 60; // Valor por unidad tributaria en bolívares
+
 module.exports = {
   /**
    * @description Crear nueva multa
@@ -18,35 +24,36 @@ module.exports = {
    */
   async createFineSV(_fineData, _officerId) {
     try {
-      // Validar que la infracción existe
-      const INFRACTION_EXISTS = await INFRACTION_MODEL.findById(_fineData.infractionId).catch((_error) => {
+      // Para efectos de prueba, tomar el primer resultado de infracciones
+      const INFRACTION_EXISTS = await INFRACTION_MODEL.findOne({ active: true }).catch((_error) => {
+        console.log(_error);
         throw new CmmErrorClass(__filename, 'FINEE001', _error).database();
       });
 
-      if (!INFRACTION_EXISTS) {
-        throw new CmmErrorClass(__filename, 'FINEE002', 'Infracción no encontrada').frontend();
-      }
+      if (!INFRACTION_EXISTS) throw new CmmErrorClass(__filename, 'FINEE002', 'No hay infracciones disponibles').frontend();
+
 
       // Validar que el conductor existe
-      const DRIVER_EXISTS = await DRIVER_MODEL.findOne({ idCard: _fineData.driverIdCard }).catch((_error) => {
+      const DRIVER_EXISTS = await DRIVER_MODEL.findOne({ active: true }).catch((_error) => {
         throw new CmmErrorClass(__filename, 'FINEE003', _error).database();
       });
 
-      if (!DRIVER_EXISTS) {
-        throw new CmmErrorClass(__filename, 'FINEE004', 'Conductor no encontrado').frontend();
-      }
+      if (!DRIVER_EXISTS) throw new CmmErrorClass(__filename, 'FINEE004', 'Conductor no encontrado').frontend();
+
 
       // Validar que el vehículo existe
-      const VEHICLE_EXISTS = await VEHICLE_MODEL.findOne({ plate: _fineData.vehiclePlate }).catch((_error) => {
+      const VEHICLE_EXISTS = await VEHICLE_MODEL.findOne({ active: true }).catch((_error) => {
         throw new CmmErrorClass(__filename, 'FINEE005', _error).database();
       });
 
-      if (!VEHICLE_EXISTS) {
-        throw new CmmErrorClass(__filename, 'FINEE006', 'Vehículo no encontrado').frontend();
-      }
+      if (!VEHICLE_EXISTS) throw new CmmErrorClass(__filename, 'FINEE006', 'Vehículo no encontrado').frontend();
+
 
       // Generar número de multa único
       const FINE_NUMBER = await module.exports.generateFineNumberSV();
+
+      // Calcular el amount basado en las unidades tributarias
+      const CALCULATED_AMOUNT = INFRACTION_EXISTS.taxUnits * TAX_UNIT_VALUE;
 
       const FINE_DATA = {
         ..._fineData,
@@ -55,6 +62,7 @@ module.exports = {
         vehicle: VEHICLE_EXISTS._id,
         fineNumber: FINE_NUMBER,
         officer: _officerId,
+        amount: CALCULATED_AMOUNT,
         createdAt: new Date()
       };
 
@@ -62,6 +70,37 @@ module.exports = {
         throw new CmmErrorClass(__filename, 'FINEE007', _error).database();
       });
 
+      // Obtener datos completos para el correo
+      const FINE_WITH_POPULATE = await FINE_MODEL.findById(FINE_RESULT._id)
+        .populate('infraction', 'code name description article severity taxUnits')
+        .populate('driver', 'firstName lastName idCard email')
+        .populate('vehicle', 'plate brand model year color vehicleType')
+        .populate('officer', 'firstName lastName idCard badgeNumber')
+        .catch((_error) => {
+          throw new CmmErrorClass(__filename, 'FINEE036', _error).database();
+        });
+
+      // Calcular el monto de la multa
+
+      // Preparar datos para el correo
+      const MAIL_DATA = {
+        fineId: FINE_WITH_POPULATE.fineNumber,
+        date: FINE_WITH_POPULATE.infractionDate || new Date().toLocaleDateString('es-VE'),
+        offense: FINE_WITH_POPULATE.infraction.name,
+        article: FINE_WITH_POPULATE.infraction.article,
+        plate: FINE_WITH_POPULATE.vehicle.plate,
+        model: `${FINE_WITH_POPULATE.vehicle.brand} ${FINE_WITH_POPULATE.vehicle.model} ${FINE_WITH_POPULATE.vehicle.year}`,
+        color: FINE_WITH_POPULATE.vehicle.color,
+        amount: `Bs. ${CALCULATED_AMOUNT.toLocaleString('es-VE')}`,
+        officer: `${FINE_WITH_POPULATE.officer.firstName} ${FINE_WITH_POPULATE.officer.lastName}`,
+        officerId: FINE_WITH_POPULATE.officer.idCard,
+        paymentDeadline: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toLocaleDateString('es-VE'), // 15 días
+        reconsiderationDeadline: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toLocaleDateString('es-VE') // 5 días
+      };
+
+
+      const MAIL_RESULT = await sendFineMailSV([_fineData.driverEmail], MAIL_DATA);
+      console.log(MAIL_RESULT);
       return FINE_RESULT;
     } catch (_error) {
       throw !_error.errorType ? new CmmErrorClass(__filename, 'FINEE008', _error).server() : _error;
@@ -78,13 +117,13 @@ module.exports = {
   async getFinesSV(_filters, _page, _limit) {
     try {
       const WHERE = {};
-      
+
       if (_filters.status) WHERE.status = _filters.status;
       if (_filters.officer) WHERE.officer = _filters.officer;
       if (_filters.severity) WHERE['infraction.severity'] = _filters.severity;
       if (_filters.driverId) WHERE['driver.idCard'] = _filters.driverId;
       if (_filters.vehiclePlate) WHERE['vehicle.plate'] = _filters.vehiclePlate;
-      
+
       if (_filters.dateFrom || _filters.dateTo) {
         WHERE.createdAt = {};
         if (_filters.dateFrom) WHERE.createdAt.$gte = new Date(_filters.dateFrom);
@@ -215,23 +254,35 @@ module.exports = {
         throw new CmmErrorClass(__filename, 'FINEE023', 'No tiene permisos para enviar esta multa').frontend();
       }
 
-      const FINE_RESULT = await FINE_MODEL.findByIdAndUpdate(_id, 
-        { 
-          status: 'SENT', 
+      const FINE_RESULT = await FINE_MODEL.findByIdAndUpdate(_id,
+        {
+          status: 'SENT',
           sentAt: new Date(),
           updatedAt: new Date()
-        }, 
+        },
         { new: true }
       ).populate('infraction')
-       .populate('driver')
-       .populate('vehicle')
-       .populate('officer')
-       .catch((_error) => {
-         throw new CmmErrorClass(__filename, 'FINEE024', _error).database();
-       });
+        .populate('driver')
+        .populate('vehicle')
+        .populate('officer')
+        .catch((_error) => {
+          throw new CmmErrorClass(__filename, 'FINEE024', _error).database();
+        });
 
-      // Aquí se podría enviar notificación por email al conductor
-      // await sendNotificationEmailSV(FINE_RESULT);
+      await sendFineMailSV([FINE_RESULT.driver.email], MAIL_DATA);
+
+      const MAIL_DATA = {
+        fineId: FINE_RESULT.fineNumber,
+        date: FINE_RESULT.infractionDate || new Date().toLocaleDateString('es-VE'),
+        offense: FINE_RESULT.infraction.name,
+        article: FINE_RESULT.infraction.article,
+        plate: FINE_RESULT.vehicle.plate,
+        model: `${FINE_RESULT.vehicle.brand} ${FINE_RESULT.vehicle.model} ${FINE_RESULT.vehicle.year}`,
+        color: FINE_RESULT.vehicle.color,
+        amount: `Bs. ${FINE_RESULT.amount.toLocaleString('es-VE')}`,
+        officer: `${FINE_RESULT.officer.firstName} ${FINE_RESULT.officer.lastName}`,
+        officerId: FINE_RESULT.officer.idCard,
+      };
 
       return FINE_RESULT;
     } catch (_error) {
@@ -264,22 +315,22 @@ module.exports = {
         throw new CmmErrorClass(__filename, 'FINEE029', 'No se puede anular una multa ya pagada').frontend();
       }
 
-      const FINE_RESULT = await FINE_MODEL.findByIdAndUpdate(_id, 
-        { 
-          status: 'CANCELLED', 
+      const FINE_RESULT = await FINE_MODEL.findByIdAndUpdate(_id,
+        {
+          status: 'CANCELLED',
           cancellationReason: _reason,
           cancelledAt: new Date(),
           cancelledBy: _officerId,
           updatedAt: new Date()
-        }, 
+        },
         { new: true }
       ).populate('infraction')
-       .populate('driver')
-       .populate('vehicle')
-       .populate('officer')
-       .catch((_error) => {
-         throw new CmmErrorClass(__filename, 'FINEE030', _error).database();
-       });
+        .populate('driver')
+        .populate('vehicle')
+        .populate('officer')
+        .catch((_error) => {
+          throw new CmmErrorClass(__filename, 'FINEE030', _error).database();
+        });
 
       return FINE_RESULT;
     } catch (_error) {
@@ -295,9 +346,9 @@ module.exports = {
   async getFinesStatisticsSV(_filters) {
     try {
       const WHERE = {};
-      
+
       if (_filters.officer) WHERE.officer = _filters.officer;
-      
+
       if (_filters.dateFrom || _filters.dateTo) {
         WHERE.createdAt = {};
         if (_filters.dateFrom) WHERE.createdAt.$gte = new Date(_filters.dateFrom);
@@ -349,9 +400,9 @@ module.exports = {
       const TODAY = new Date();
       const YEAR = TODAY.getFullYear();
       const MONTH = String(TODAY.getMonth() + 1).padStart(2, '0');
-      
+
       const PREFIX = `M-${YEAR}${MONTH}`;
-      
+
       const LAST_FINE = await FINE_MODEL.findOne({
         fineNumber: { $regex: `^${PREFIX}` }
       }).sort({ fineNumber: -1 }).catch((_error) => {

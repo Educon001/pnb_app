@@ -51,18 +51,6 @@ const INFRACTION_MODEL = new Schema(
       required: true,
       min: 0
     },
-    bolivarValue: {
-      type: Schema.Types.Number,
-      description: 'Valor en bolívares de la multa',
-      required: true,
-      min: 0
-    },
-    licensePoints: {
-      type: Schema.Types.Number,
-      description: 'Puntos que se descuentan de la licencia',
-      default: 0,
-      min: 0
-    },
     requiresPhoto: {
       type: Schema.Types.Boolean,
       description: 'Indica si requiere foto como evidencia',

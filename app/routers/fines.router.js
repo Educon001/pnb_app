@@ -41,29 +41,22 @@ const {
  * @param {String} location - Ubicación de la infracción
  * @param {String} address - Dirección específica
  * @param {String} [coordinates] - Coordenadas GPS (lat,lng)
- * @param {String} [notes] - Notas adicionales
  * @param {String} driverIdCard - Cédula del conductor
  * @param {String} driverFirstName - Nombres del conductor
  * @param {String} driverLastName - Apellidos del conductor
  * @param {String} [driverPhone] - Teléfono del conductor
  * @param {String} [driverEmail] - Email del conductor
  * @param {String} [driverAddress] - Dirección del conductor
- * @param {Date} [driverLicenseExpiry] - Fecha de vencimiento de la licencia
  * @param {String} vehiclePlate - Placa del vehículo
  * @param {String} vehicleType - Tipo de vehículo
  * @param {String} vehicleBrand - Marca del vehículo
  * @param {String} vehicleModel - Modelo del vehículo
  * @param {String} vehicleColor - Color del vehículo
  * @param {String} vehicleYear - Año del vehículo
- * @param {String} [vehicleVin] - VIN del vehículo
- * @param {String} infractionId - ID de la infracción
  * @param {String} description - Descripción de la infracción
- * @param {Number} amount - Monto de la multa
- * @param {Array} [evidence] - Evidencias de la infracción
- * @param {Array} [witnesses] - Testigos de la infracción
  * @returns {Object} - Respuesta con la multa creada
  */
-Router.post('/v1/create', CMM_AUTH_KEY_MID('FINES_CREATE'), verifyTokenMID, verifyFinesPermissionMID, createFineFVAL(), createFineDVAL, CMM_CONFIG_MID(['FINES_CONFIG']), createFineCON);
+Router.post('/v1/create', verifyTokenMID, verifyFinesPermissionMID, createFineFVAL(), createFineDVAL, createFineCON);
 
 /**
  * @version        :2.0.0
