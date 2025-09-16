@@ -260,7 +260,6 @@ module.exports = {
         CREDENTIALS.PARTIAL,
         _data
       );
-      console.log(BODY);
       return await CmmSendMailSV(
         _emails,
         CREDENTIALS.subject,

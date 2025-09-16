@@ -23,23 +23,11 @@ const createFineDVAL = async (_req, _res, _next) => {
       description
     } = _req.body;
     
-    // Business validation logic
-    let PARSED_INFRACTION_DATE = null;
-    
-    // Convertir fecha si está presente
-    if (infractionDate) {
-      try {
-        PARSED_INFRACTION_DATE = parseDateSV(infractionDate);
-      } catch (_error) {
-        throw new CmmErrorClass(__filename, 'FINES032', _error.message).frontend();
-      }
-    }
-    
     // Set validated data in request
     _req.CC = _req.CC || {};
     _req.CC.VALIDATED_DATA = { 
       location, 
-      infractionDate: PARSED_INFRACTION_DATE, 
+      infractionDate: new Date(), 
       infractionTime,
       driverIdCard, driverFirstName, driverLastName, driverPhone, driverEmail, driverAddress,
       vehiclePlate, vehicleType, vehicleBrand, vehicleModel, vehicleColor, vehicleYear,

@@ -42,7 +42,7 @@ const FINE_MODEL = new Schema(
       address: {
         type: Schema.Types.String,
         description: 'Dirección donde ocurrió la infracción',
-        required: true
+        required: false
       },
       coordinates: {
         latitude: {
@@ -58,12 +58,12 @@ const FINE_MODEL = new Schema(
     infractionDate: {
       type: Schema.Types.Date,
       description: 'Fecha de la infracción',
-      required: true
+      required: false
     },
     infractionTime: {
       type: Schema.Types.String,
       description: 'Hora de la infracción',
-      required: true
+      required: false
     },
     evidence: {
       photos: [{
