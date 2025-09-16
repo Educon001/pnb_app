@@ -1,0 +1,885 @@
+{
+  "info": {
+    "name": "PNB Multas Electrónicas API v2.0",
+    "description": "Colección de Postman para la API de PNB Multas Electrónicas - Versión 2.0 con patrón CMM y modelos actualizados",
+    "version": "2.1.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "fineId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "infractionId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "driverId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "vehicleId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Autenticación",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "AUTH_LOGIN"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"jrodriguez\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/v1/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "v1", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('token', response.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Obtener Perfil",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "AUTH_PROFILE"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/v1/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "v1", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Cerrar Sesión",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "AUTH_LOGOUT"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/v1/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "v1", "logout"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar Perfil",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "AUTH_UPDATE_PROFILE"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Juan Carlos\",\n  \"lastName\": \"Rodriguez\",\n  \"email\": \"jrodriguez@pnb.gob.ve\",\n  \"phone\": \"04121234567\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/v1/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "v1", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Cambiar Contraseña",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "AUTH_CHANGE_PASSWORD"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"123456\",\n  \"newPassword\": \"nueva123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/v1/change-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "v1", "change-password"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Multas",
+      "item": [
+        {
+          "name": "Crear Multa Completa",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "FINES_CREATE"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"location\": \"Carrera 7 con Calle 80\",\n  \"address\": \"Carrera 7 #80-20, Bogotá\",\n  \"coordinates\": \"4.6097,-74.0817\",\n  \"notes\": \"Semáforo en rojo\",\n  \"driverIdCard\": \"V-12345678\",\n  \"driverFirstName\": \"Juan Carlos\",\n  \"driverLastName\": \"Pérez\",\n  \"driverPhone\": \"04121234567\",\n  \"driverEmail\": \"jperez@email.com\",\n  \"driverAddress\": \"Av. Principal, Caracas\",\n  \"driverLicenseExpiry\": \"2025-12-31\",\n  \"vehiclePlate\": \"ABC-1234\",\n  \"vehicleType\": \"CAR\",\n  \"vehicleBrand\": \"Toyota\",\n  \"vehicleModel\": \"Corolla\",\n  \"vehicleColor\": \"Blanco\",\n  \"vehicleYear\": \"2020\",\n  \"vehicleVin\": \"1HGBH41JXMN109186\",\n  \"infractionId\": \"{{infractionId}}\",\n  \"description\": \"Exceso de velocidad en zona escolar\",\n  \"amount\": 600,\n  \"evidence\": [\"foto1.jpg\", \"foto2.jpg\"],\n  \"witnesses\": [\"Testigo 1\", \"Testigo 2\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/fines/v1/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["fines", "v1", "create"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('fineId', response.data._id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear Multa con Datos del Seed",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "FINES_CREATE"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"location\": \"Av. Principal, Caracas\",\n  \"address\": \"Av. Principal, Caracas\",\n  \"coordinates\": \"10.4806,-66.9036\",\n  \"notes\": \"Conducir sin licencia en zona escolar\",\n  \"driverIdCard\": \"V-12345678\",\n  \"driverFirstName\": \"Carlos Alberto\",\n  \"driverLastName\": \"Martínez\",\n  \"driverPhone\": \"04121234567\",\n  \"driverEmail\": \"cmartinez@email.com\",\n  \"driverAddress\": \"Av. Principal, Caracas\",\n  \"driverLicenseExpiry\": \"2025-01-15\",\n  \"vehiclePlate\": \"ABC-1234\",\n  \"vehicleType\": \"CAR\",\n  \"vehicleBrand\": \"Toyota\",\n  \"vehicleModel\": \"Corolla\",\n  \"vehicleColor\": \"Blanco\",\n  \"vehicleYear\": \"2018\",\n  \"vehicleVin\": \"1HGBH41JXMN109186\",\n  \"infractionId\": \"{{infractionId}}\",\n  \"description\": \"Conducir sin licencia en zona escolar\",\n  \"amount\": 600,\n  \"evidence\": [],\n  \"witnesses\": []\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/fines/v1/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["fines", "v1", "create"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('fineId', response.data._id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar Multas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "FINES_LIST"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fines/v1/list?page=1&limit=10&status=DRAFT",
+              "host": ["{{baseUrl}}"],
+              "path": ["fines", "v1", "list"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "status",
+                  "value": "DRAFT"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener Multa por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "FINES_GET"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fines/v1/{{fineId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["fines", "v1", "{{fineId}}"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar Multa",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "FINES_UPDATE"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"DRAFT\",\n  \"notes\": \"Multa actualizada\",\n  \"description\": \"Descripción actualizada de la infracción\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/fines/v1/{{fineId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["fines", "v1", "{{fineId}}"]
+            }
+          }
+        },
+        {
+          "name": "Enviar Multa",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "FINES_SEND"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fines/v1/{{fineId}}/send",
+              "host": ["{{baseUrl}}"],
+              "path": ["fines", "v1", "{{fineId}}", "send"]
+            }
+          }
+        },
+        {
+          "name": "Cancelar Multa",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "FINES_CANCEL"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Error en los datos del conductor\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/fines/v1/{{fineId}}/cancel",
+              "host": ["{{baseUrl}}"],
+              "path": ["fines", "v1", "{{fineId}}", "cancel"]
+            }
+          }
+        },
+        {
+          "name": "Generar PDF",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "FINES_PDF"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fines/v1/{{fineId}}/generate-pdf",
+              "host": ["{{baseUrl}}"],
+              "path": ["fines", "v1", "{{fineId}}", "generate-pdf"]
+            }
+          }
+        },
+        {
+          "name": "Enviar Notificación",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "FINES_NOTIFY"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fines/v1/{{fineId}}/send-notification",
+              "host": ["{{baseUrl}}"],
+              "path": ["fines", "v1", "{{fineId}}", "send-notification"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Infracciones",
+      "item": [
+        {
+          "name": "Listar Infracciones",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "INFRACTIONS_LIST"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/infractions/v1/list?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["infractions", "v1", "list"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.data && response.data.length > 0) {",
+                  "        pm.collectionVariables.set('infractionId', response.data[0]._id);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Obtener Infracción por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "INFRACTIONS_GET"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/infractions/v1/{{infractionId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["infractions", "v1", "{{infractionId}}"]
+            }
+          }
+        },
+        {
+          "name": "Crear Infracción",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "INFRACTIONS_CREATE"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"ART006\",\n  \"name\": \"No usar cinturón de seguridad\",\n  \"description\": \"Conducir sin usar el cinturón de seguridad\",\n  \"article\": \"Art. 89\",\n  \"severity\": \"LIGHT\",\n  \"vehicleType\": \"CAR\",\n  \"taxUnits\": 3,\n  \"bolivarValue\": 180,\n  \"licensePoints\": 1,\n  \"requiresPhoto\": false,\n  \"requiresEvidence\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/infractions/v1/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["infractions", "v1", "create"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Conductores",
+      "item": [
+        {
+          "name": "Listar Conductores",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "DRIVERS_LIST"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/drivers/v1/list?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["drivers", "v1", "list"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.data && response.data.length > 0) {",
+                  "        pm.collectionVariables.set('driverId', response.data[0]._id);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Obtener Conductor por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "DRIVERS_GET"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/drivers/v1/{{driverId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["drivers", "v1", "{{driverId}}"]
+            }
+          }
+        },
+        {
+          "name": "Buscar Conductor por Cédula",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "DRIVERS_SEARCH"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/drivers/v1/search/cedula/V-12345678",
+              "host": ["{{baseUrl}}"],
+              "path": ["drivers", "v1", "search", "cedula", "V-12345678"]
+            }
+          }
+        },
+        {
+          "name": "Crear Conductor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "DRIVERS_CREATE"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Juan Carlos\",\n  \"lastName\": \"Pérez\",\n  \"idCard\": \"V-12345678\",\n  \"licenseNumber\": \"123456789\",\n  \"licenseGrade\": \"CLASS_C\",\n  \"licenseIssueDate\": \"2020-01-15\",\n  \"licenseExpiryDate\": \"2025-01-15\",\n  \"phone\": \"04121234567\",\n  \"email\": \"jperez@email.com\",\n  \"address\": \"Av. Principal, Caracas\",\n  \"birthDate\": \"1985-05-20\",\n  \"nationality\": \"VENEZOLANA\",\n  \"gender\": \"MALE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/drivers/v1/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["drivers", "v1", "create"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Vehículos",
+      "item": [
+        {
+          "name": "Listar Vehículos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "VEHICLES_LIST"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/vehicles/v1/list?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["vehicles", "v1", "list"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.data && response.data.length > 0) {",
+                  "        pm.collectionVariables.set('vehicleId', response.data[0]._id);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Obtener Vehículo por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "VEHICLES_GET"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/vehicles/v1/{{vehicleId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["vehicles", "v1", "{{vehicleId}}"]
+            }
+          }
+        },
+        {
+          "name": "Buscar Vehículo por Placa",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "VEHICLES_SEARCH"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/vehicles/v1/search/plate/ABC-1234",
+              "host": ["{{baseUrl}}"],
+              "path": ["vehicles", "v1", "search", "plate", "ABC-1234"]
+            }
+          }
+        },
+        {
+          "name": "Crear Vehículo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "VEHICLES_CREATE"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"plate\": \"ABC-1234\",\n  \"brand\": \"Toyota\",\n  \"model\": \"Corolla\",\n  \"year\": 2018,\n  \"color\": \"Blanco\",\n  \"vehicleType\": \"CAR\",\n  \"displacement\": 1600,\n  \"fuel\": \"GASOLINE\",\n  \"transmission\": \"AUTOMATIC\",\n  \"owner\": {\n    \"firstName\": \"Juan Carlos\",\n    \"lastName\": \"Pérez\",\n    \"idCard\": \"V-12345678\",\n    \"phone\": \"04121234567\",\n    \"email\": \"jperez@email.com\",\n    \"address\": \"Av. Principal, Caracas\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/vehicles/v1/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["vehicles", "v1", "create"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Estadísticas",
+      "item": [
+        {
+          "name": "Obtener Estadísticas Generales",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "STATISTICS_GENERAL"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/statistics/v1/general",
+              "host": ["{{baseUrl}}"],
+              "path": ["statistics", "v1", "general"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Resumen Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "STATISTICS_DASHBOARD"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/statistics/v1/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["statistics", "v1", "dashboard"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Infracciones Más Comunes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "STATISTICS_COMMON_INFRACTIONS"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/statistics/v1/common-infractions",
+              "host": ["{{baseUrl}}"],
+              "path": ["statistics", "v1", "common-infractions"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Estadísticas de Multas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "FINES_STATS"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fines/v1/statistics",
+              "host": ["{{baseUrl}}"],
+              "path": ["fines", "v1", "statistics"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
