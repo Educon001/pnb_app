@@ -32,7 +32,7 @@ module.exports = {
       const MSG = {
         to: _emails,
         from: {
-          email: 'noreply@pnb.com.ve', // Cambiar por tu email verificado en SendGrid
+          email: 'soycarlosluis862@gmail.com', // Email verificado en SendGrid
           name: 'Policía Nacional Bolivariana'
         },
         subject: 'Notificación de Infracción de Tránsito',
