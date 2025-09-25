@@ -3,6 +3,7 @@
 const { CmmErrorClass, CmmSendMailSV } = require('../utils');
 const { MailerSend } = require('mailersend');
 const Handlebars = require('handlebars');
+const { sendFineNotificationSV } = require('./postmark.service');
 
 module.exports = {
   /**
@@ -211,18 +212,9 @@ module.exports = {
         PARTIAL: PARTIAL_TEMPLATE
       };
 
-      const BODY = await module.exports._generateHtmlSV(
-        CREDENTIALS.LAYOUT,
-        CREDENTIALS.PARTIAL,
-        _data
-      );
-      console.log('[MAIL SERVICE] Usando Gmail SMTP para desarrollo...');
-      return await CmmSendMailSV(
-        _emails,
-        CREDENTIALS.subject,
-        BODY,
-        CREDENTIALS.credentials
-      ).catch(_error => {
+      // Usar Postmark en lugar de SMTP
+      console.log('[MAIL SERVICE] Usando Postmark API para envío...');
+      return await sendFineNotificationSV(_emails, _data).catch(_error => {
         throw new CmmErrorClass(__filename, 'SMAILE004', _error).server();
       });
     } catch (_error) {
