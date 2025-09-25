@@ -1,53 +1,112 @@
 'use strict';
 
-const { CmmErrorClass, CmmSendMailSV } = require('../utils');
-const { sendFineMailSV: sendGridSendFineMailSV } = require('./sendgrid.service');
+const { CmmErrorClass } = require('../utils');
+const sgMail = require('@sendgrid/mail');
 const Handlebars = require('handlebars');
+
+// Configurar API Key de SendGrid
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 module.exports = {
   /**
    * @function      :sendFineMailSV
    * @version       :1.0.0
-   * @description   :Envía un correo con la notificación de multa.
-   * @param {Object} _req - Request object
+   * @description   :Envía un correo con la notificación de multa usando SendGrid API.
    * @param {Array} _emails - Array de correos a enviar.
    * @param {Object} _data - Data para el correo.
    * @returns {Promise<Object>} - Resultado del envío
    */
   async sendFineMailSV(_emails, _data) {
     try {
-      // Validaciones
-      if (!_emails)
-        throw new CmmErrorClass(
-          __filename,
-          'SMAILE002',
-          'Error, parámetro "_emails"'
-        ).server();
-      if (!_data)
-        throw new CmmErrorClass(
-          __filename,
-          'SMAILE003',
-          'Error, parámetro "_data"'
-        ).server();
-
-      // Usar SendGrid API en producción, SMTP en desarrollo
-      if (process.env.NODE_ENV === 'production') {
-        console.log('[MAIL SERVICE] Usando SendGrid API para producción...');
-        return await sendGridSendFineMailSV(_emails, _data);
+      if (!_emails) {
+        throw new CmmErrorClass(__filename, 'SENDGRID001', 'Error, parámetro "_emails" es requerido').server();
+      }
+      if (!_data) {
+        throw new CmmErrorClass(__filename, 'SENDGRID002', 'Error, parámetro "_data" es requerido').server();
       }
 
-      // Configuración SMTP para desarrollo
-      const CREDENTIALS = {
-        credentials: {
-          // Gmail para desarrollo
-          host: 'smtp.gmail.com',
-          port: 465,
-          secure: true,
-          username: 'chinchinqa@gmail.com',
-          password: 'vuwcorcheflndmyj'
+      // Generar HTML del correo
+      const HTML_BODY = await module.exports._generateHtmlSV(_data);
+
+      // Configurar el mensaje
+      const MSG = {
+        to: _emails,
+        from: {
+          email: 'noreply@pnb.com.ve', // Cambiar por tu email verificado en SendGrid
+          name: 'Policía Nacional Bolivariana'
         },
-      subject: 'Notificación de Infracción de Tránsito',
-      LAYOUT: `
+        subject: 'Notificación de Infracción de Tránsito',
+        html: HTML_BODY,
+        // Configuración adicional para tracking
+        trackingSettings: {
+          clickTracking: {
+            enable: true,
+            enableText: false
+          },
+          openTracking: {
+            enable: true
+          }
+        }
+      };
+
+      console.log('[SENDGRID API] Iniciando envío de correo:', {
+        emails: _emails,
+        subject: MSG.subject,
+        environment: process.env.NODE_ENV,
+        timestamp: new Date().toISOString()
+      });
+
+      // Enviar correo usando SendGrid API
+      const RESPONSE = await sgMail.send(MSG);
+      
+      console.log('[SENDGRID API] ✅ Correo enviado exitosamente:', {
+        statusCode: RESPONSE[0].statusCode,
+        messageId: RESPONSE[0].headers['x-message-id']
+      });
+
+      return {
+        success: true,
+        emails: _emails,
+        messageId: RESPONSE[0].headers['x-message-id'],
+        statusCode: RESPONSE[0].statusCode,
+        data: RESPONSE[0]
+      };
+
+    } catch (_error) {
+      console.error('[SENDGRID API] ❌ Error enviando correo:', _error);
+      
+      // Manejo específico de errores de SendGrid
+      let errorMessage = 'Error al enviar correo con SendGrid';
+      let errorCode = 'SENDGRID003';
+      
+      if (_error.response) {
+        const { statusCode, body } = _error.response;
+        errorMessage = `SendGrid API Error: ${statusCode} - ${body?.errors?.[0]?.message || 'Error desconocido'}`;
+        errorCode = 'SENDGRID004';
+      }
+      
+      throw new CmmErrorClass(__filename, errorCode, {
+        originalError: _error,
+        message: errorMessage,
+        response: _error.response
+      }).server();
+    }
+  },
+
+  /**
+   * @private
+   * @version        :1.0.0
+   * @description    :Genera el HTML del correo usando Handlebars
+   * @param {Object} _data - data a compilar
+   * @returns {String} - html generado
+   */
+  async _generateHtmlSV(_data = {}) {
+    try {
+      if (!_data) {
+        throw new CmmErrorClass(__filename, 'SENDGRID005', 'Error, parámetro "_data" es requerido').server();
+      }
+
+      const LAYOUT = `
         <!DOCTYPE html>
         <html lang="es">
           <head>
@@ -89,22 +148,6 @@ module.exports = {
                 margin: 0;
                 font-size: 14px;
               }
-              .content-row {
-                /* No flex layout, spacing reduced */
-              }
-              .content-row p {
-                /* Removed flex styles, not used for table */
-                margin-bottom: 0;
-              }
-              .label {
-                font-weight: bold;
-                text-align: left;
-                /* Remove display: inline-block */
-              }
-              .value {
-                text-align: right;
-                /* Remove display: inline-block and flex */
-              }
               .content-row table {
                 width: 100%;
                 border-collapse: separate;
@@ -115,6 +158,7 @@ module.exports = {
                 text-align: left;
                 vertical-align: middle;
                 padding-right: 8px;
+                font-weight: bold;
               }
               .content-row td.value {
                 width: 65%;
@@ -125,26 +169,10 @@ module.exports = {
               .content-row tr {
                 height: 36px;
               }
-              .label {
-                font-weight: bold;
-              }
-              .label-fecha {
-                font-weight: normal;
-                display: inline-block;
-              }
-              .value {
-                text-align: right;
-              }
-              .content-row p {
-                width: 100%;
-              }
               .multa-fecha {
                 margin-left: 0;
                 padding: 0;
                 margin-bottom: 0;
-              }
-              .multa-fecha + .multa-fecha {
-                margin-top: 0;
               }
               .multa-label {
                 font-size: 18px;
@@ -165,40 +193,23 @@ module.exports = {
                 border-top: 1px solid #ddd;
                 margin-top: 18px;
               }
-              .pdf {
-                display: flex;
-                align-items: center;
-                color: #c00;
-                font-size: 14px;
-                font-weight: bold;
-              }
-              .pdf span {
-                border: 1px solid #c00;
+              .footer-btn {
+                background: #004a9f;
+                color: #fff;
+                border: none;
                 border-radius: 6px;
-                padding: 4px 6px;
-                margin-left: 6px;
+                padding: 8px 18px;
+                font-size: 15px;
+                font-weight: bold;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background 0.2s;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+                display: inline-block;
               }
-              .content-row td.label,
-              .content-row td.value {
-                vertical-align: middle;
+              .footer-btn:hover {
+                background: #003370;
               }
-                .footer-btn {
-                  background: #004a9f;
-                  color: #fff;
-                  border: none;
-                  border-radius: 6px;
-                  padding: 8px 18px;
-                  font-size: 15px;
-                  font-weight: bold;
-                  text-decoration: none;
-                  cursor: pointer;
-                  transition: background 0.2s;
-                  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-                  display: inline-block;
-                }
-                .footer-btn:hover {
-                  background: #003370;
-                }
             </style>
           </head>
           <body>
@@ -224,8 +235,9 @@ module.exports = {
             </div>
           </body>
         </html>
-      `,
-      PARTIAL: `
+      `;
+
+      const PARTIAL = `
         <p class="multa-fecha"><span class="multa-label">Multa </span><span class="multa-value">{{fineId}}</span></p>
         <p class="multa-fecha"><span class="label-fecha">Fecha: </span><span class="fecha-value">{{date}}</span></p>
         <hr style="border: none; border-top: 1px solid #ddd; margin: 8px 32px 8px 0; width: 100%" />
@@ -257,65 +269,16 @@ module.exports = {
             </tr>
           </table>
         </div>
-      `
-    };
-      const BODY = await module.exports._generateHtmlSV(
-        CREDENTIALS.LAYOUT,
-        CREDENTIALS.PARTIAL,
-        _data
-      );
-      console.log('[MAIL SERVICE] Usando SMTP Gmail para desarrollo...');
-      return await CmmSendMailSV(
-        _emails,
-        CREDENTIALS.subject,
-        BODY,
-        CREDENTIALS.credentials
-      ).catch(_error => {
-        throw new CmmErrorClass(__filename, 'SMAILE004', _error).server();
-      });
-    } catch (_error) {
-      throw !_error.errorType
-        ? new CmmErrorClass(__filename, 'SMAILE005', _error).server()
-        : _error;
-    }
-  },
+      `;
 
-  /**
-   * @private
-   * @version        :1.0.0
-   * @description    :metodo para generar el html a base de un layout y un partial con sus datos
-   * @param {String} _layout - string de layout
-   * @param {String} _partial - string de partial
-   * @param {Object} _data - data a copilar
-   * @returns {String} - html generado
-   */
-  async _generateHtmlSV(_layout, _partial, _data = {}) {
-    try {
-      if (!_layout)
-        throw new CmmErrorClass(
-          __filename,
-          'SMAILE006',
-          'Error, parámetro "_layout"'
-        ).server();
-      if (!_partial)
-        throw new CmmErrorClass(
-          __filename,
-          'SMAILE007',
-          'Error, parámetro "_partial"'
-        ).server();
-      if (!_data)
-        throw new CmmErrorClass(
-          __filename,
-          'SMAILE008',
-          'Error, parámetro "_data"'
-        ).server();
-      const LAYOUT = Handlebars.compile(_layout);
-      const PARTIAL = Handlebars.compile(_partial);
+      const LAYOUT_COMPILED = Handlebars.compile(LAYOUT);
+      const PARTIAL_COMPILED = Handlebars.compile(PARTIAL);
 
-      Handlebars.registerPartial('partial', PARTIAL);
-      return LAYOUT(_data);
+      Handlebars.registerPartial('partial', PARTIAL_COMPILED);
+      return LAYOUT_COMPILED(_data);
+
     } catch (_error) {
-      throw new CmmErrorClass(__filename, 'SMAILE009', _error).server();
+      throw new CmmErrorClass(__filename, 'SENDGRID006', _error).server();
     }
   }
 };
