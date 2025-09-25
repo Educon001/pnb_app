@@ -1,7 +1,7 @@
 'use strict';
 
 const { CmmErrorClass, CmmSendMailSV } = require('../utils');
-const { sendFineMailSV: mailerSendSendFineMailSV } = require('./mailersend.service');
+const { MailerSend } = require('mailersend');
 const Handlebars = require('handlebars');
 
 module.exports = {
@@ -9,7 +9,6 @@ module.exports = {
    * @function      :sendFineMailSV
    * @version       :1.0.0
    * @description   :Envía un correo con la notificación de multa.
-   * @param {Object} _req - Request object
    * @param {Array} _emails - Array de correos a enviar.
    * @param {Object} _data - Data para el correo.
    * @returns {Promise<Object>} - Resultado del envío
@@ -30,25 +29,8 @@ module.exports = {
           'Error, parámetro "_data"'
         ).server();
 
-      // Usar MailerSend SMTP en producción, Gmail SMTP en desarrollo
-      const CREDENTIALS = {
-        credentials: process.env.NODE_ENV === 'production' ? {
-          // MailerSend para producción
-          host: 'smtp.mailersend.net',
-          port: 587,
-          secure: false, // TLS
-          username: 'MS_airQux@test-3m5jgrokmkdgdpyo.mlsender.net',
-          password: 'mssp.VtfHhO3.vywj2lpp62ml7oqz.E8zsTfv'
-        } : {
-          // Gmail para desarrollo
-          host: 'smtp.gmail.com',
-          port: 465,
-          secure: true,
-          username: 'chinchinqa@gmail.com',
-          password: 'vuwcorcheflndmyj'
-        },
-      subject: 'Notificación de Infracción de Tránsito',
-      LAYOUT: `
+      // Plantillas HTML (compartidas entre producción y desarrollo)
+      const LAYOUT_TEMPLATE = `
         <!DOCTYPE html>
         <html lang="es">
           <head>
@@ -90,22 +72,6 @@ module.exports = {
                 margin: 0;
                 font-size: 14px;
               }
-              .content-row {
-                /* No flex layout, spacing reduced */
-              }
-              .content-row p {
-                /* Removed flex styles, not used for table */
-                margin-bottom: 0;
-              }
-              .label {
-                font-weight: bold;
-                text-align: left;
-                /* Remove display: inline-block */
-              }
-              .value {
-                text-align: right;
-                /* Remove display: inline-block and flex */
-              }
               .content-row table {
                 width: 100%;
                 border-collapse: separate;
@@ -116,6 +82,7 @@ module.exports = {
                 text-align: left;
                 vertical-align: middle;
                 padding-right: 8px;
+                font-weight: bold;
               }
               .content-row td.value {
                 width: 65%;
@@ -126,26 +93,10 @@ module.exports = {
               .content-row tr {
                 height: 36px;
               }
-              .label {
-                font-weight: bold;
-              }
-              .label-fecha {
-                font-weight: normal;
-                display: inline-block;
-              }
-              .value {
-                text-align: right;
-              }
-              .content-row p {
-                width: 100%;
-              }
               .multa-fecha {
                 margin-left: 0;
                 padding: 0;
                 margin-bottom: 0;
-              }
-              .multa-fecha + .multa-fecha {
-                margin-top: 0;
               }
               .multa-label {
                 font-size: 18px;
@@ -166,40 +117,23 @@ module.exports = {
                 border-top: 1px solid #ddd;
                 margin-top: 18px;
               }
-              .pdf {
-                display: flex;
-                align-items: center;
-                color: #c00;
-                font-size: 14px;
-                font-weight: bold;
-              }
-              .pdf span {
-                border: 1px solid #c00;
+              .footer-btn {
+                background: #004a9f;
+                color: #fff;
+                border: none;
                 border-radius: 6px;
-                padding: 4px 6px;
-                margin-left: 6px;
+                padding: 8px 18px;
+                font-size: 15px;
+                font-weight: bold;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background 0.2s;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+                display: inline-block;
               }
-              .content-row td.label,
-              .content-row td.value {
-                vertical-align: middle;
+              .footer-btn:hover {
+                background: #003370;
               }
-                .footer-btn {
-                  background: #004a9f;
-                  color: #fff;
-                  border: none;
-                  border-radius: 6px;
-                  padding: 8px 18px;
-                  font-size: 15px;
-                  font-weight: bold;
-                  text-decoration: none;
-                  cursor: pointer;
-                  transition: background 0.2s;
-                  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-                  display: inline-block;
-                }
-                .footer-btn:hover {
-                  background: #003370;
-                }
             </style>
           </head>
           <body>
@@ -225,8 +159,9 @@ module.exports = {
             </div>
           </body>
         </html>
-      `,
-      PARTIAL: `
+      `;
+
+      const PARTIAL_TEMPLATE = `
         <p class="multa-fecha"><span class="multa-label">Multa </span><span class="multa-value">{{fineId}}</span></p>
         <p class="multa-fecha"><span class="label-fecha">Fecha: </span><span class="fecha-value">{{date}}</span></p>
         <hr style="border: none; border-top: 1px solid #ddd; margin: 8px 32px 8px 0; width: 100%" />
@@ -258,14 +193,80 @@ module.exports = {
             </tr>
           </table>
         </div>
-      `
-    };
+      `;
+
+      // Usar MailerSend API en producción, Gmail SMTP en desarrollo
+      if (process.env.NODE_ENV === 'production') {
+        console.log('[MAIL SERVICE] Usando MailerSend API para producción...');
+        
+        // Configurar MailerSend API
+        const mailerSend = new MailerSend({
+          apiKey: 'mssp.VtfHhO3.vywj2lpp62ml7oqz.E8zsTfv',
+        });
+
+        // Generar HTML del correo
+        const HTML_BODY = await module.exports._generateHtmlSV(
+          LAYOUT_TEMPLATE,
+          PARTIAL_TEMPLATE,
+          _data
+        );
+
+        // Configurar el mensaje usando MailerSend API
+        const sentFrom = {
+          email: 'MS_airQux@test-3m5jgrokmkdgdpyo.mlsender.net',
+          name: 'Policía Nacional Bolivariana'
+        };
+
+        const recipients = _emails.map(email => ({
+          email: email
+        }));
+
+        const emailParams = {
+          from: sentFrom,
+          to: recipients,
+          subject: 'Notificación de Infracción de Tránsito',
+          html: HTML_BODY,
+          text: 'Notificación de Infracción de Tránsito - Consulte el contenido HTML para más detalles.'
+        };
+
+        // Enviar correo usando MailerSend API
+        const response = await mailerSend.email.send(emailParams);
+        
+        console.log('[MAILERSEND API] ✅ Correo enviado exitosamente:', {
+          messageId: response.headers['x-message-id'],
+          statusCode: response.status
+        });
+
+        return {
+          success: true,
+          emails: _emails,
+          messageId: response.headers['x-message-id'],
+          statusCode: response.status,
+          data: response.data
+        };
+      }
+
+      // Configuración SMTP para desarrollo
+      const CREDENTIALS = {
+        credentials: {
+          // Gmail para desarrollo
+          host: 'smtp.gmail.com',
+          port: 465,
+          secure: true,
+          username: 'chinchinqa@gmail.com',
+          password: 'vuwcorcheflndmyj'
+        },
+        subject: 'Notificación de Infracción de Tránsito',
+        LAYOUT: LAYOUT_TEMPLATE,
+        PARTIAL: PARTIAL_TEMPLATE
+      };
+
       const BODY = await module.exports._generateHtmlSV(
         CREDENTIALS.LAYOUT,
         CREDENTIALS.PARTIAL,
         _data
       );
-      console.log(`[MAIL SERVICE] Usando ${process.env.NODE_ENV === 'production' ? 'MailerSend SMTP' : 'Gmail SMTP'} para ${process.env.NODE_ENV}...`);
+      console.log('[MAIL SERVICE] Usando Gmail SMTP para desarrollo...');
       return await CmmSendMailSV(
         _emails,
         CREDENTIALS.subject,
