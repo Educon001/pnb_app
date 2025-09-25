@@ -199,9 +199,19 @@ module.exports = {
       if (process.env.NODE_ENV === 'production') {
         console.log('[MAIL SERVICE] Usando MailerSend API para producción...');
         
+        // Validar que la API key esté configurada
+        const MAILERSEND_API_KEY = process.env.MAILERSEND_API_KEY;
+        if (!MAILERSEND_API_KEY) {
+          throw new CmmErrorClass(
+            __filename,
+            'SMAILE010',
+            'MAILERSEND_API_KEY no está configurada en las variables de entorno'
+          ).server();
+        }
+        
         // Configurar MailerSend API
         const mailerSend = new MailerSend({
-          apiKey: 'mssp.VtfHhO3.vywj2lpp62ml7oqz.E8zsTfv',
+          apiKey: MAILERSEND_API_KEY,
         });
 
         // Generar HTML del correo
@@ -230,7 +240,35 @@ module.exports = {
         };
 
         // Enviar correo usando MailerSend API
-        const response = await mailerSend.email.send(emailParams);
+        const response = await mailerSend.email.send(emailParams).catch((_error) => {
+          console.error('[MAILERSEND API] ❌ Error enviando correo:', _error);
+          
+          // Manejo específico de errores de autenticación
+          if (_error.response && _error.response.status === 401) {
+            throw new CmmErrorClass(
+              __filename,
+              'SMAILE011',
+              'Error de autenticación con MailerSend API. Verifique que la API key sea válida y tenga los permisos correctos.'
+            ).server();
+          }
+          
+          // Manejo de otros errores de API
+          if (_error.response) {
+            const { status, data } = _error.response;
+            throw new CmmErrorClass(
+              __filename,
+              'SMAILE012',
+              `Error de MailerSend API: ${status} - ${data?.message || 'Error desconocido'}`
+            ).server();
+          }
+          
+          // Error general
+          throw new CmmErrorClass(
+            __filename,
+            'SMAILE013',
+            `Error al enviar correo: ${_error.message}`
+          ).server();
+        });
         
         console.log('[MAILERSEND API] ✅ Correo enviado exitosamente:', {
           messageId: response.headers['x-message-id'],
