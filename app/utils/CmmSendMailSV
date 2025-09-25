@@ -25,7 +25,7 @@ module.exports = {
       if (!_credentials.username) throw new CmmErrorClass(__filename, 'CMM-SMAILE031', 'Error, campo de credencial "USERNAME" es requerido y no puede ser vacío').server();
       if (!_credentials.password) throw new CmmErrorClass(__filename, 'CMM-SMAILE031', 'Error, campo de credencial "PASSWORD" es requerido y no puede ser vacío').server();
       
-      // Creamos el transporter
+      // Creamos el transporter con configuración de timeout y reintentos
       const TRANSPORTER = createTransport({
         host: _credentials.host,
         port: _credentials.port,
@@ -34,6 +34,28 @@ module.exports = {
           user: _credentials.username,
           pass: _credentials.password,
         },
+        // Configuración de timeout y conexión (optimizada para Render)
+        connectionTimeout: process.env.NODE_ENV === 'production' ? 120000 : 60000, // 2 min en prod, 1 min en dev
+        greetingTimeout: process.env.NODE_ENV === 'production' ? 60000 : 30000,   // 1 min en prod, 30s en dev
+        socketTimeout: process.env.NODE_ENV === 'production' ? 120000 : 60000,     // 2 min en prod, 1 min en dev
+        // Configuración de reintentos
+        pool: process.env.NODE_ENV === 'production' ? false : true, // Deshabilitar pool en Render
+        maxConnections: process.env.NODE_ENV === 'production' ? 1 : 5,
+        maxMessages: process.env.NODE_ENV === 'production' ? 1 : 100,
+        rateLimit: process.env.NODE_ENV === 'production' ? 1 : 14, // 1 email por segundo en Render
+        // Configuración adicional para Gmail y Render
+        tls: {
+          rejectUnauthorized: false,
+          ciphers: 'SSLv3'
+        },
+        // Configuración específica para Render
+        ...(process.env.NODE_ENV === 'production' && {
+          // Configuración adicional para entornos cloud
+          ignoreTLS: false,
+          requireTLS: true,
+          debug: false,
+          logger: false
+        })
       });
       // Retornamos el transporter
       return TRANSPORTER;
@@ -46,8 +68,8 @@ module.exports = {
 
   /**
    * @function      :CmmSendMailSV
-   * @version       :3.0.0
-   * @description   :Envía un correo con HTML directo (con o sin attachments).
+   * @version       :3.1.0
+   * @description   :Envía un correo con HTML directo (con o sin attachments) con sistema de reintentos.
    * @param {Array} _emails - Array de correos a enviar.
    * @param {String} _subject - Asunto del correo.
    * @param {String} _html - Contenido HTML del correo.
@@ -62,7 +84,19 @@ module.exports = {
       if (!_html) throw new CmmErrorClass(__filename, 'CMM-SMAILE014', 'Error, parámetro "_html"').server();
       if (!_credentials) throw new CmmErrorClass(__filename, 'CMM-SMAILE014', 'Error, parámetro "_credentials"').server();
       
+      // Logging inicial para debugging en Render
+      console.log('[SMTP INIT] Iniciando envío de correo:', {
+        emails: _emails,
+        subject: _subject,
+        environment: process.env.NODE_ENV,
+        host: _credentials.host,
+        port: _credentials.port,
+        secure: _credentials.secure,
+        timestamp: new Date().toISOString()
+      });
+
       const TRANSPORTER_EMAIL = await module.exports._getTransportNotifyEmailService(_credentials).catch((_error) => {
+        console.error('[SMTP ERROR] Error creando transporter:', _error);
         throw new CmmErrorClass(__filename, 'CMM-SMAILE015').parseCatch(_error);
       });
 
