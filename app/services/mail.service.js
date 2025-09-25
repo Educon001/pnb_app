@@ -14,8 +14,17 @@ module.exports = {
    * @returns {Promise<Object>} - Resultado del envío
    */
   async sendFineMailSV(_emails, _data) {
+    // Configuración dinámica basada en el entorno
     const CREDENTIALS = {
-      credentials: {
+      credentials: process.env.NODE_ENV === 'production' ? {
+        // SendGrid para producción (Render)
+        host: 'smtp.sendgrid.net',
+        port: 587,
+        secure: false,
+        username: 'apikey',
+        password: process.env.SENDGRID_API_KEY
+      } : {
+        // Gmail para desarrollo
         host: 'smtp.gmail.com',
         port: 465,
         secure: true,
