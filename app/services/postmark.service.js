@@ -29,14 +29,14 @@ module.exports = {
       }
 
       // Configuración Postmark
-      const POSTMARK_CLIENT = new ServerClient('bf81c8f1-eadd-40e1-8ed6-c5194b209cf9');
+      const POSTMARK_CLIENT = new ServerClient('aee08ded-5fbd-4e14-9663-127dd942ba59');
       
       // Email del remitente por defecto
-      const FROM_EMAIL = _from || 'noreply@pnb-multas.com';
+      const FROM_EMAIL = _from || 'chernandez@pagochinchin.com';
 
       // Configuración del email
       const EMAIL_CONFIG = {
-        From: FROM_EMAIL,
+        From: "chernandez@pagochinchin.com",
         To: _to,
         Subject: _subject,
         HtmlBody: _htmlBody,
@@ -88,7 +88,7 @@ module.exports = {
       }
 
       // Configuración Postmark
-      const POSTMARK_CLIENT = new ServerClient('bf81c8f1-eadd-40e1-8ed6-c5194b209cf9');
+      const POSTMARK_CLIENT = new ServerClient('aee08ded-5fbd-4e14-9663-127dd942ba59');
 
       // Preparar emails para envío en lote
       const EMAILS_TO_SEND = _emails.map((_email) => {
@@ -97,7 +97,7 @@ module.exports = {
         }
 
         return {
-          From: _email.from || 'noreply@pnb-multas.com',
+          From: _email.from || 'chernandez@pagochinchin.com',
           To: _email.to,
           Subject: _email.subject,
           HtmlBody: _email.htmlBody,
@@ -323,11 +323,11 @@ module.exports = {
       `;
 
       // Configuración Postmark
-      const POSTMARK_CLIENT = new ServerClient('bf81c8f1-eadd-40e1-8ed6-c5194b209cf9');
+      const POSTMARK_CLIENT = new ServerClient('aee08ded-5fbd-4e14-9663-127dd942ba59');
 
       // Preparar emails para envío
       const EMAILS_TO_SEND = _emails.map((_email) => ({
-        From: 'noreply@pnb-multas.com',
+        From: 'chernandez@pagochinchin.com',
         To: _email,
         Subject: 'Notificación de Infracción de Tránsito - PNB',
         HtmlBody: HTML_TEMPLATE,
@@ -374,7 +374,7 @@ module.exports = {
         throw new CmmErrorClass(__filename, 'SPOSTE015', 'ID del mensaje es requerido').server();
       }
 
-      const POSTMARK_CLIENT = new ServerClient('bf81c8f1-eadd-40e1-8ed6-c5194b209cf9');
+      const POSTMARK_CLIENT = new ServerClient('aee08ded-5fbd-4e14-9663-127dd942ba59');
 
       const RESULT = await POSTMARK_CLIENT.getOutboundMessageDetails(_messageId).catch((_error) => {
         throw new CmmErrorClass(__filename, 'SPOSTE016', _error).api();
