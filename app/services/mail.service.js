@@ -1,7 +1,6 @@
 'use strict';
 
 const { CmmErrorClass, CmmSendMailSV } = require('../utils');
-const { sendFineMailSV: sendGridSendFineMailSV } = require('./sendgrid.service');
 const Handlebars = require('handlebars');
 
 module.exports = {
@@ -30,15 +29,16 @@ module.exports = {
           'Error, parámetro "_data"'
         ).server();
 
-      // Usar SendGrid API en producción, SMTP en desarrollo
-      if (process.env.NODE_ENV === 'production') {
-        console.log('[MAIL SERVICE] Usando SendGrid API para producción...');
-        return await sendGridSendFineMailSV(_emails, _data);
-      }
-
-      // Configuración SMTP para desarrollo
+      // Usar MailerSend SMTP en producción, Gmail SMTP en desarrollo
       const CREDENTIALS = {
-        credentials: {
+        credentials: process.env.NODE_ENV === 'production' ? {
+          // MailerSend para producción
+          host: 'smtp.mailersend.net',
+          port: 587,
+          secure: false, // TLS
+          username: 'MS_airQux@test-3m5jgrokmkdgdpyo.mlsender.net',
+          password: 'mssp.VtfHhO3.vywj2lpp62ml7oqz.E8zsTfv'
+        } : {
           // Gmail para desarrollo
           host: 'smtp.gmail.com',
           port: 465,
@@ -264,7 +264,7 @@ module.exports = {
         CREDENTIALS.PARTIAL,
         _data
       );
-      console.log('[MAIL SERVICE] Usando SMTP Gmail para desarrollo...');
+      console.log(`[MAIL SERVICE] Usando ${process.env.NODE_ENV === 'production' ? 'MailerSend SMTP' : 'Gmail SMTP'} para ${process.env.NODE_ENV}...`);
       return await CmmSendMailSV(
         _emails,
         CREDENTIALS.subject,
