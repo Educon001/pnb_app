@@ -18,25 +18,25 @@ module.exports = {
     try {
       // Buscar policía por username
       const POLICE_RESULT = await POLICE_MODEL.findOne({ username: _username }).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'AUTHE001', _error).database();
+        throw new CmmErrorClass(__filename, 'CPNB-SAUTHE001', _error).database();
       });
 
       if (!POLICE_RESULT) {
-        throw new CmmErrorClass(__filename, 'AUTHE002', 'Credenciales inválidas').frontend();
+        throw new CmmErrorClass(__filename, 'CPNB-SAUTHE002', 'Credenciales inválidas').frontend();
       }
 
       // Verificar contraseña
       const PASSWORD_VALID = await bcrypt.compare(_password, POLICE_RESULT.password).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'AUTHE003', _error).server();
+        throw new CmmErrorClass(__filename, 'CPNB-SAUTHE003', _error).server();
       });
 
       if (!PASSWORD_VALID) {
-        throw new CmmErrorClass(__filename, 'AUTHE004', 'Credenciales inválidas').frontend();
+        throw new CmmErrorClass(__filename, 'CPNB-SAUTHE004', 'Credenciales inválidas').frontend();
       }
 
       // Verificar que el policía esté activo
       if (!POLICE_RESULT.active) {
-        throw new CmmErrorClass(__filename, 'AUTHE005', 'Cuenta desactivada').frontend();
+        throw new CmmErrorClass(__filename, 'CPNB-SAUTHE005', 'Cuenta desactivada').frontend();
       }
 
       // Generar token JWT
@@ -55,7 +55,7 @@ module.exports = {
         lastLogin: new Date(),
         updatedAt: new Date()
       }).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'AUTHE006', _error).database();
+        throw new CmmErrorClass(__filename, 'CPNB-SAUTHE006', _error).database();
       });
 
       return {
@@ -75,7 +75,7 @@ module.exports = {
         }
       };
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'AUTHE007', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-SAUTHE007', _error).server() : _error;
     }
   },
 
@@ -93,12 +93,12 @@ module.exports = {
         lastLogout: new Date(),
         updatedAt: new Date()
       }).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'AUTHE008', _error).database();
+        throw new CmmErrorClass(__filename, 'CPNB-SAUTHE008', _error).database();
       });
 
       return { message: 'Sesión cerrada exitosamente' };
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'AUTHE009', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-SAUTHE009', _error).server() : _error;
     }
   },
 
@@ -112,16 +112,16 @@ module.exports = {
       const PROFILE_RESULT = await POLICE_MODEL.findById(_policeId)
         .select('-password')
         .catch((_error) => {
-          throw new CmmErrorClass(__filename, 'AUTHE010', _error).database();
+          throw new CmmErrorClass(__filename, 'CPNB-SAUTHE010', _error).database();
         });
 
       if (!PROFILE_RESULT) {
-        throw new CmmErrorClass(__filename, 'AUTHE011', 'Policía no encontrado').frontend();
+        throw new CmmErrorClass(__filename, 'CPNB-SAUTHE011', 'Policía no encontrado').frontend();
       }
 
       return PROFILE_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'AUTHE012', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-SAUTHE012', _error).server() : _error;
     }
   },
 
@@ -134,11 +134,11 @@ module.exports = {
   async updateProfileSV(_policeId, _updateData) {
     try {
       const POLICE_EXISTS = await POLICE_MODEL.findById(_policeId).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'AUTHE013', _error).database();
+        throw new CmmErrorClass(__filename, 'CPNB-SAUTHE013', _error).database();
       });
 
       if (!POLICE_EXISTS) {
-        throw new CmmErrorClass(__filename, 'AUTHE014', 'Policía no encontrado').frontend();
+        throw new CmmErrorClass(__filename, 'CPNB-SAUTHE014', 'Policía no encontrado').frontend();
       }
 
       // Verificar si el nuevo email ya existe en otro policía
@@ -147,11 +147,11 @@ module.exports = {
           email: _updateData.email,
           _id: { $ne: _policeId }
         }).catch((_error) => {
-          throw new CmmErrorClass(__filename, 'AUTHE015', _error).database();
+          throw new CmmErrorClass(__filename, 'CPNB-SAUTHE015', _error).database();
         });
 
         if (EXISTING_EMAIL) {
-          throw new CmmErrorClass(__filename, 'AUTHE016', 'Ya existe un policía con este email').frontend();
+          throw new CmmErrorClass(__filename, 'CPNB-SAUTHE016', 'Ya existe un policía con este email').frontend();
         }
       }
 
@@ -163,12 +163,12 @@ module.exports = {
       const PROFILE_RESULT = await POLICE_MODEL.findByIdAndUpdate(_policeId, UPDATE_DATA, { new: true })
         .select('-password')
         .catch((_error) => {
-          throw new CmmErrorClass(__filename, 'AUTHE017', _error).database();
+          throw new CmmErrorClass(__filename, 'CPNB-SAUTHE017', _error).database();
         });
 
       return PROFILE_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'AUTHE018', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-SAUTHE018', _error).server() : _error;
     }
   },
 
@@ -182,26 +182,26 @@ module.exports = {
   async changePasswordSV(_policeId, _currentPassword, _newPassword) {
     try {
       const POLICE_RESULT = await POLICE_MODEL.findById(_policeId).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'AUTHE019', _error).database();
+        throw new CmmErrorClass(__filename, 'CPNB-SAUTHE019', _error).database();
       });
 
       if (!POLICE_RESULT) {
-        throw new CmmErrorClass(__filename, 'AUTHE020', 'Policía no encontrado').frontend();
+        throw new CmmErrorClass(__filename, 'CPNB-SAUTHE020', 'Policía no encontrado').frontend();
       }
 
       // Verificar contraseña actual
       const CURRENT_PASSWORD_VALID = await bcrypt.compare(_currentPassword, POLICE_RESULT.password).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'AUTH021', _error).server();
+        throw new CmmErrorClass(__filename, 'CPNB-SAUTHE021', _error).server();
       });
 
       if (!CURRENT_PASSWORD_VALID) {
-        throw new CmmErrorClass(__filename, 'AUTH022', 'Contraseña actual incorrecta').frontend();
+        throw new CmmErrorClass(__filename, 'CPNB-SAUTHE022', 'Contraseña actual incorrecta').frontend();
       }
 
       // Encriptar nueva contraseña
       const SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS) || 10;
       const HASHED_PASSWORD = await bcrypt.hash(_newPassword, SALT_ROUNDS).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'AUTH023', _error).server();
+        throw new CmmErrorClass(__filename, 'CPNB-SAUTHE023', _error).server();
       });
 
       // Actualizar contraseña
@@ -209,12 +209,12 @@ module.exports = {
         password: HASHED_PASSWORD,
         updatedAt: new Date()
       }).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'AUTH024', _error).database();
+        throw new CmmErrorClass(__filename, 'CPNB-SAUTHE024', _error).database();
       });
 
       return { message: 'Contraseña actualizada exitosamente' };
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'AUTH025', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-SAUTHE025', _error).server() : _error;
     }
   },
 
@@ -226,15 +226,15 @@ module.exports = {
   async renewTokenSV(_policeId) {
     try {
       const POLICE_RESULT = await POLICE_MODEL.findById(_policeId).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'AUTH026', _error).database();
+        throw new CmmErrorClass(__filename, 'CPNB-SAUTHE026', _error).database();
       });
 
       if (!POLICE_RESULT) {
-        throw new CmmErrorClass(__filename, 'AUTH027', 'Policía no encontrado').frontend();
+        throw new CmmErrorClass(__filename, 'CPNB-SAUTHE027', 'Policía no encontrado').frontend();
       }
 
       if (!POLICE_RESULT.active) {
-        throw new CmmErrorClass(__filename, 'AUTH028', 'Cuenta desactivada').frontend();
+        throw new CmmErrorClass(__filename, 'CPNB-SAUTHE028', 'Cuenta desactivada').frontend();
       }
 
       // Generar nuevo token JWT
@@ -253,7 +253,7 @@ module.exports = {
         expiresIn: process.env.JWT_EXPIRES_IN || '24h'
       };
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'AUTH029', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-SAUTHE029', _error).server() : _error;
     }
   },
 
@@ -269,23 +269,23 @@ module.exports = {
       const POLICE_RESULT = await POLICE_MODEL.findById(DECODED.id)
         .select('-password')
         .catch((_error) => {
-          throw new CmmErrorClass(__filename, 'AUTH030', _error).database();
+          throw new CmmErrorClass(__filename, 'CPNB-SAUTHE030', _error).database();
         });
 
       if (!POLICE_RESULT) {
-        throw new CmmErrorClass(__filename, 'AUTH031', 'Policía no encontrado').frontend();
+        throw new CmmErrorClass(__filename, 'CPNB-SAUTHE031', 'Policía no encontrado').frontend();
       }
 
       if (!POLICE_RESULT.active) {
-        throw new CmmErrorClass(__filename, 'AUTH032', 'Cuenta desactivada').frontend();
+        throw new CmmErrorClass(__filename, 'CPNB-SAUTHE032', 'Cuenta desactivada').frontend();
       }
 
       return POLICE_RESULT;
     } catch (_error) {
       if (_error.name === 'JsonWebTokenError' || _error.name === 'TokenExpiredError') {
-        throw new CmmErrorClass(__filename, 'AUTH033', 'Token inválido o expirado').frontend();
+        throw new CmmErrorClass(__filename, 'CPNB-SAUTHE033', 'Token inválido o expirado').frontend();
       }
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'AUTH034', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-SAUTHE034', _error).server() : _error;
     }
   }
 };

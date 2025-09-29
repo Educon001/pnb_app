@@ -4,198 +4,36 @@ const { CmmErrorClass, CmmSendMailSV } = require('../utils');
 const { MailerSend } = require('mailersend');
 const Handlebars = require('handlebars');
 
+/* Services */
+const { getEmailTemplateByTagSV, processEmailTemplateSV } = require('./email-template.service');
+
 module.exports = {
   /**
    * @function      :sendFineMailSV
-   * @version       :1.0.0
-   * @description   :Envía un correo con la notificación de multa.
+   * @version       :2.0.0
+   * @description   :Envía un correo con la notificación de multa usando plantillas dinámicas.
    * @param {Array} _emails - Array de correos a enviar.
-   * @param {Object} _data - Data para el correo.
+   * @param {Object} _data - Data para el correo (puede incluir plantilla procesada o datos para procesar).
+   * @param {String} _templateTag - Tag de la plantilla a usar (opcional, por defecto 'FINE_NOTIFICATION_HTML').
    * @returns {Promise<Object>} - Resultado del envío
    */
-  async sendFineMailSV(_emails, _data) {
+  async sendFineMailSV(_emails, _data, _templateTag = 'FINE_NOTIFICATION_HTML') {
     try {
       // Validaciones
-      if (!_emails)
-        throw new CmmErrorClass(
-          __filename,
-          'SMAILE002',
-          'Error, parámetro "_emails"'
-        ).server();
-      if (!_data)
-        throw new CmmErrorClass(
-          __filename,
-          'SMAILE003',
-          'Error, parámetro "_data"'
-        ).server();
+      if (!_emails) throw new CmmErrorClass(__filename, 'CPNB-SMAILE002','Error, parámetro "_emails"').server();
+      if (!_data) throw new CmmErrorClass(__filename, 'CPNB-SMAILE003','Error, parámetro "_data"').server();
 
-      // Plantillas HTML (compartidas entre producción y desarrollo)
-      const LAYOUT_TEMPLATE = `
-        <!DOCTYPE html>
-        <html lang="es">
-          <head>
-            <meta charset="UTF-8" />
-            <title>Notificación de Infracción</title>
-            <style>
-              body {
-                font-family: Arial, sans-serif;
-                margin: 0;
-                background: #f9f9f9;
-              }
-              .card {
-                width: 370px;
-                border: 1px solid #ddd;
-                border-radius: 8px;
-                background: #fff;
-                overflow: hidden;
-                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-                padding: 18px;
-                margin: 24px auto;
-              }
-              .header {
-                background: #004a9f;
-                color: #fff;
-                padding: 12px 16px;
-                display: flex;
-                align-items: center;
-              }
-              .header img {
-                width: 50px;
-                margin-right: 10px;
-              }
-              .header h2 {
-                font-size: 16px;
-                margin: 0;
-                font-weight: bold;
-              }
-              .header p {
-                margin: 0;
-                font-size: 14px;
-              }
-              .content-row table {
-                width: 100%;
-                border-collapse: separate;
-                table-layout: fixed;
-              }
-              .content-row td.label {
-                width: 35%;
-                text-align: left;
-                vertical-align: middle;
-                padding-right: 8px;
-                font-weight: bold;
-              }
-              .content-row td.value {
-                width: 65%;
-                text-align: right;
-                vertical-align: middle;
-                word-break: break-word;
-              }
-              .content-row tr {
-                height: 36px;
-              }
-              .multa-fecha {
-                margin-left: 0;
-                padding: 0;
-                margin-bottom: 0;
-              }
-              .multa-label {
-                font-size: 18px;
-                font-weight: bold;
-              }
-              .multa-value {
-                font-size: 18px;
-                font-weight: bold;
-                margin-left: 4px;
-              }
-              .fecha-value {
-                margin-left: 4px;
-              }
-              .footer {
-                display: block;
-                text-align: center;
-                padding: 10px 16px;
-                border-top: 1px solid #ddd;
-                margin-top: 18px;
-              }
-              .footer-btn {
-                background: #004a9f;
-                color: #fff;
-                border: none;
-                border-radius: 6px;
-                padding: 8px 18px;
-                font-size: 15px;
-                font-weight: bold;
-                text-decoration: none;
-                cursor: pointer;
-                transition: background 0.2s;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-                display: inline-block;
-              }
-              .footer-btn:hover {
-                background: #003370;
-              }
-            </style>
-          </head>
-          <body>
-            <div class="card">
-              <!-- Encabezado -->
-              <div class="header" style="margin: -18px; margin-bottom: 0; border-top-left-radius: 8px; border-top-right-radius: 8px">
-                <img src="https://www.cpnb.com.ve/_next/static/media/PNBLOGOV2.248d6ec8.png" alt="Escudo PNB" />
-                <div>
-                  <h2>POLICÍA NACIONAL BOLIVARIANA</h2>
-                  <p>Notificación de Infracción de Tránsito</p>
-                </div>
-              </div>
+      let PROCESSED_EMAIL;
 
-              <!-- Contenido -->
-              <div class="content">
-                {{> partial}}
-              </div>
+        const TEMPLATE = await getEmailTemplateByTagSV(_templateTag).catch(_error => {throw new CmmErrorClass(__filename, 'CPNB-SMAILE004', _error).server()});
+      console.log('[MAIL SERVICE] Template:', TEMPLATE);
+        if (TEMPLATE) {
+          // Procesar plantilla con los datos
+          PROCESSED_EMAIL = await processEmailTemplateSV(TEMPLATE.code, _data).catch(_error => {throw new CmmErrorClass(__filename, 'CPNB-SMAILE005', _error).server()});
+          // Agregar layout del modelo si está disponible
+          if (TEMPLATE.layout) PROCESSED_EMAIL.layout = TEMPLATE.layout;
+        }
 
-              <!-- Footer -->
-              <div class="footer">
-                  <a href="{{paymentGatewayUrl}}" class="footer-btn">REALIZAR PAGO</a>
-              </div>
-            </div>
-          </body>
-        </html>
-      `;
-
-      const PARTIAL_TEMPLATE = `
-        <p class="multa-fecha"><span class="multa-label">Multa </span><span class="multa-value">{{fineId}}</span></p>
-        <p class="multa-fecha"><span class="label-fecha">Fecha: </span><span class="fecha-value">{{date}}</span></p>
-        <hr style="border: none; border-top: 1px solid #ddd; margin: 8px 32px 8px 0; width: 100%" />
-        <div class="content-row">
-          <table style="width: 100%; border-collapse: collapse">
-            <tr>
-              <td class="label">Infracción</td>
-              <td class="value" style="text-align: right">{{offense}}, Art. {{article}}</td>
-            </tr>
-            <tr>
-              <td class="label">Vehículo</td>
-              <td class="value" style="text-align: right">{{plate}} - {{model}} - {{color}}</td>
-            </tr>
-            <tr>
-              <td class="label">Monto</td>
-              <td class="value" style="text-align: right">{{amount}}</td>
-            </tr>
-            <tr>
-              <td class="label">Funcionario</td>
-              <td class="value" style="text-align: right">{{officer}}<br />C.I.: {{officerId}}</td>
-            </tr>
-            <tr>
-              <td class="label">Plazo de pago</td>
-              <td class="value" style="text-align: right">{{paymentDeadline}}</td>
-            </tr>
-            <tr>
-              <td class="label">Derecho a Reconsideración</td>
-              <td class="value" style="text-align: right">{{reconsiderationDeadline}}</td>
-            </tr>
-          </table>
-        </div>
-      `;
-
-      
       // Configuración SMTP para desarrollo
       const CREDENTIALS = {
         credentials: {
@@ -205,30 +43,166 @@ module.exports = {
           secure: true,
           username: 'chinchinqa@gmail.com',
           password: 'vuwcorcheflndmyj'
-        },
-        subject: 'Notificación de Infracción de Tránsito',
-        LAYOUT: LAYOUT_TEMPLATE,
-        PARTIAL: PARTIAL_TEMPLATE
+        }
       };
 
-      const BODY = await module.exports._generateHtmlSV(
-        CREDENTIALS.LAYOUT,
-        CREDENTIALS.PARTIAL,
-        _data
-      );
+      // Generar HTML usando Handlebars
+      let HTML_BODY = PROCESSED_EMAIL.htmlContent || PROCESSED_EMAIL.content;
+
+      // Si el contenido HTML es un template completo, procesarlo directamente
+      if (PROCESSED_EMAIL.htmlContent && PROCESSED_EMAIL.htmlContent.includes('<!DOCTYPE html>')) {
+        HTML_BODY = await module.exports._processHtmlTemplate(PROCESSED_EMAIL.htmlContent, _data);
+      } else if (PROCESSED_EMAIL.htmlContent) {
+        // Si es un partial, usar el layout del modelo o el por defecto
+        const LAYOUT_TO_USE = PROCESSED_EMAIL.layout || module.exports._getLayoutTemplate();
+        HTML_BODY = await module.exports._generateHtmlSV(
+          LAYOUT_TO_USE,
+          PROCESSED_EMAIL.htmlContent,
+          _data
+        );
+      }
+
       console.log('[MAIL SERVICE] Usando Gmail SMTP para desarrollo...');
       return await CmmSendMailSV(
         _emails,
-        CREDENTIALS.subject,
-        BODY,
+        PROCESSED_EMAIL.subject,
+        HTML_BODY,
         CREDENTIALS.credentials
       ).catch(_error => {
-        throw new CmmErrorClass(__filename, 'SMAILE004', _error).server();
+        throw new CmmErrorClass(__filename, 'CPNB-SMAILE004', _error).server();
       });
     } catch (_error) {
       throw !_error.errorType
-        ? new CmmErrorClass(__filename, 'SMAILE005', _error).server()
+        ? new CmmErrorClass(__filename, 'CPNB-SMAILE005', _error).server()
         : _error;
+    }
+  },
+
+  /**
+   * @function      :sendGenericMailSV
+   * @version       :2.0.0
+   * @description   :Envía un correo genérico usando plantillas dinámicas.
+   * @param {Array} _emails - Array de correos a enviar.
+   * @param {String} _templateTag - Tag de la plantilla a usar.
+   * @param {Object} _variables - Variables para la plantilla.
+   * @returns {Promise<Object>} - Resultado del envío
+   */
+  async sendGenericMailSV(_emails, _templateTag, _variables) {
+    try {
+      // Validaciones
+      if (!_emails)
+        throw new CmmErrorClass(
+          __filename,
+          'CPNB-SMAILE010',
+          'Error, parámetro "_emails"'
+        ).server();
+      if (!_templateTag)
+        throw new CmmErrorClass(
+          __filename,
+          'CPNB-SMAILE011',
+          'Error, parámetro "_templateTag"'
+        ).server();
+      if (!_variables)
+        throw new CmmErrorClass(
+          __filename,
+          'CPNB-SMAILE012',
+          'Error, parámetro "_variables"'
+        ).server();
+
+      // Obtener plantilla por tag
+      const TEMPLATE = await getEmailTemplateByTagSV(_templateTag).catch(_error => {
+        console.log('Error obteniendo plantilla genérica por tag, usando plantilla por defecto:', _error);
+        return null;
+      });
+
+      let PROCESSED_EMAIL;
+      if (TEMPLATE) {
+        // Procesar plantilla con los datos
+        PROCESSED_EMAIL = await processEmailTemplateSV(TEMPLATE.code, _variables).catch(_error => {
+          console.log('Error procesando plantilla genérica, usando plantilla por defecto:', _error);
+          return this._getDefaultEmailTemplate(_variables);
+        });
+
+        // Agregar layout del modelo si está disponible
+        if (TEMPLATE.layout) {
+          PROCESSED_EMAIL.layout = TEMPLATE.layout;
+        }
+      } else {
+        // Fallback a plantilla por defecto
+        PROCESSED_EMAIL = this._getDefaultEmailTemplate(_variables);
+      }
+
+      // Configuración SMTP para desarrollo
+      const CREDENTIALS = {
+        credentials: {
+          host: 'smtp.gmail.com',
+          port: 465,
+          secure: true,
+          username: 'chinchinqa@gmail.com',
+          password: 'vuwcorcheflndmyj'
+        }
+      };
+
+      // Generar HTML usando Handlebars
+      let HTML_BODY = PROCESSED_EMAIL.htmlContent || PROCESSED_EMAIL.content;
+
+      // Si el contenido HTML es un template completo, procesarlo directamente
+      if (PROCESSED_EMAIL.htmlContent && PROCESSED_EMAIL.htmlContent.includes('<!DOCTYPE html>')) {
+        HTML_BODY = await module.exports._processHtmlTemplate(PROCESSED_EMAIL.htmlContent, _variables);
+      } else if (PROCESSED_EMAIL.htmlContent) {
+        // Si es un partial, usar el layout del modelo o el por defecto
+        const LAYOUT_TO_USE = PROCESSED_EMAIL.layout;
+        HTML_BODY = await module.exports._generateHtmlSV(
+          LAYOUT_TO_USE,
+          PROCESSED_EMAIL.htmlContent,
+          _variables
+        );
+      }
+
+      console.log(`[MAIL SERVICE] Enviando correo con plantilla: ${_templateTag}`);
+      return await CmmSendMailSV(
+        _emails,
+        PROCESSED_EMAIL.subject,
+        HTML_BODY,
+        CREDENTIALS.credentials
+      ).catch(_error => {
+        throw new CmmErrorClass(__filename, 'CPNB-SMAILE013', _error).server();
+      });
+    } catch (_error) {
+      throw !_error.errorType
+        ? new CmmErrorClass(__filename, 'CPNB-SMAILE014', _error).server()
+        : _error;
+    }
+  },
+
+
+  /**
+   * @private
+   * @version        :2.0.0
+   * @description    :Procesa un template HTML completo con variables
+   * @param {String} _htmlTemplate - Template HTML completo
+   * @param {Object} _data - data a compilar
+   * @returns {String} - html generado
+   */
+  async _processHtmlTemplate(_htmlTemplate, _data = {}) {
+    try {
+      if (!_htmlTemplate)
+        throw new CmmErrorClass(
+          __filename,
+          'CPNB-SMAILE015',
+          'Error, parámetro "_htmlTemplate"'
+        ).server();
+      if (!_data)
+        throw new CmmErrorClass(
+          __filename,
+          'CPNB-SMAILE016',
+          'Error, parámetro "_data"'
+        ).server();
+
+      const TEMPLATE = Handlebars.compile(_htmlTemplate);
+      return TEMPLATE(_data);
+    } catch (_error) {
+      throw new CmmErrorClass(__filename, 'CPNB-SMAILE017', _error).server();
     }
   },
 
@@ -246,19 +220,19 @@ module.exports = {
       if (!_layout)
         throw new CmmErrorClass(
           __filename,
-          'SMAILE006',
+          'CPNB-SMAILE006',
           'Error, parámetro "_layout"'
         ).server();
       if (!_partial)
         throw new CmmErrorClass(
           __filename,
-          'SMAILE007',
+          'CPNB-SMAILE007',
           'Error, parámetro "_partial"'
         ).server();
       if (!_data)
         throw new CmmErrorClass(
           __filename,
-          'SMAILE008',
+          'CPNB-SMAILE008',
           'Error, parámetro "_data"'
         ).server();
       const LAYOUT = Handlebars.compile(_layout);
@@ -267,7 +241,7 @@ module.exports = {
       Handlebars.registerPartial('partial', PARTIAL);
       return LAYOUT(_data);
     } catch (_error) {
-      throw new CmmErrorClass(__filename, 'SMAILE009', _error).server();
+      throw new CmmErrorClass(__filename, 'CPNB-SMAILE009', _error).server();
     }
   }
 };

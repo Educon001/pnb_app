@@ -31,14 +31,6 @@ const CMM_COMMONS_SUBMODEL = (version = '1.0.0') => {
       required: false
     },
     
-    // Campos de estado
-    status: {
-      type: String,
-      enum: ['ACTIVE', 'INACTIVE', 'PENDING', 'DELETED'],
-      default: 'ACTIVE',
-      required: true
-    },
-    
     // Campos de versión
     version: {
       type: String,

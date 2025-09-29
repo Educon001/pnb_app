@@ -18,17 +18,17 @@ const verifyTokenMID = async (_req, _res, _next) => {
     const TOKEN = _req.header('Authorization')?.replace('Bearer ', '');
     
     if (!TOKEN) {
-      throw new CmmErrorClass(__filename, 'AUTH001', 'Token de acceso requerido').frontend();
+      throw new CmmErrorClass(__filename, 'CPNB-MAUTHE001', 'Token de acceso requerido').frontend();
     }
 
     const POLICE_RESULT = await verifyTokenSV(TOKEN).catch((_error) => {
-      throw new CmmErrorClass(__filename, 'AUTH002').parseCatch(_error);
+      throw new CmmErrorClass(__filename, 'CPNB-MAUTHE002').parseCatch(_error);
     });
 
     _req.police = POLICE_RESULT;
     _next();
   } catch (_error) {
-    return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'AUTH003', _error).server() : _error);
+    return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'CPNB-MAUTHE003', _error).server() : _error);
   }
 };
 
@@ -42,18 +42,18 @@ const verifyRoleMID = (..._roles) => {
     const CC_RESPONSE = new CmmHttpRespClass(_req, _res);
     try {
       if (!_req.police) {
-        throw new CmmErrorClass(__filename, 'AUTH004', 'Token de acceso requerido').frontend();
+        throw new CmmErrorClass(__filename, 'CPNB-MAUTHE004', 'Token de acceso requerido').frontend();
       }
 
       const HAS_ROLE = _req.police.roles.some(role => _roles.includes(role));
       
       if (!HAS_ROLE) {
-        throw new CmmErrorClass(__filename, 'AUTH005', 'No tiene permisos para acceder a este recurso').frontend();
+        throw new CmmErrorClass(__filename, 'CPNB-MAUTHE005', 'No tiene permisos para acceder a este recurso').frontend();
       }
 
       _next();
     } catch (_error) {
-      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'AUTH006', _error).server() : _error);
+      return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'CPNB-MAUTHE006', _error).server() : _error);
     }
   };
 };
@@ -69,19 +69,19 @@ const verifyFinesPermissionMID = (_req, _res, _next) => {
   const CC_RESPONSE = new CmmHttpRespClass(_req, _res);
   try {
     if (!_req.police) {
-      throw new CmmErrorClass(__filename, 'AUTH007', 'Token de acceso requerido').frontend();
+      throw new CmmErrorClass(__filename, 'CPNB-MAUTHE007', 'Token de acceso requerido').frontend();
     }
 
     const ALLOWED_ROLES = ['OFFICER', 'SUPERVISOR', 'ADMIN'];
     const HAS_PERMISSION = _req.police.roles.some(role => ALLOWED_ROLES.includes(role));
     
     if (!HAS_PERMISSION) {
-      throw new CmmErrorClass(__filename, 'AUTH008', 'No tiene permisos para gestionar multas').frontend();
+      throw new CmmErrorClass(__filename, 'CPNB-MAUTHE008', 'No tiene permisos para gestionar multas').frontend();
     }
 
     _next();
   } catch (_error) {
-    return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'AUTH009', _error).server() : _error);
+    return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'CPNB-MAUTHE009', _error).server() : _error);
   }
 };
 
@@ -96,19 +96,19 @@ const verifyStatisticsPermissionMID = (_req, _res, _next) => {
   const CC_RESPONSE = new CmmHttpRespClass(_req, _res);
   try {
     if (!_req.police) {
-      throw new CmmErrorClass(__filename, 'AUTH010', 'Token de acceso requerido').frontend();
+      throw new CmmErrorClass(__filename, 'CPNB-MAUTHE010', 'Token de acceso requerido').frontend();
     }
 
     const ALLOWED_ROLES = ['SUPERVISOR', 'ADMIN'];
     const HAS_PERMISSION = _req.police.roles.some(role => ALLOWED_ROLES.includes(role));
     
     if (!HAS_PERMISSION) {
-      throw new CmmErrorClass(__filename, 'AUTH011', 'No tiene permisos para ver estadísticas').frontend();
+      throw new CmmErrorClass(__filename, 'CPNB-MAUTHE011', 'No tiene permisos para ver estadísticas').frontend();
     }
 
     _next();
   } catch (_error) {
-    return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'AUTH012', _error).server() : _error);
+    return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'CPNB-MAUTHE012', _error).server() : _error);
   }
 };
 
@@ -123,19 +123,19 @@ const verifyUsersPermissionMID = (_req, _res, _next) => {
   const CC_RESPONSE = new CmmHttpRespClass(_req, _res);
   try {
     if (!_req.police) {
-      throw new CmmErrorClass(__filename, 'AUTH013', 'Token de acceso requerido').frontend();
+      throw new CmmErrorClass(__filename, 'CPNB-MAUTHE013', 'Token de acceso requerido').frontend();
     }
 
     const ALLOWED_ROLES = ['ADMIN'];
     const HAS_PERMISSION = _req.police.roles.some(role => ALLOWED_ROLES.includes(role));
     
     if (!HAS_PERMISSION) {
-      throw new CmmErrorClass(__filename, 'AUTH014', 'No tiene permisos para gestionar usuarios').frontend();
+      throw new CmmErrorClass(__filename, 'CPNB-MAUTHE014', 'No tiene permisos para gestionar usuarios').frontend();
     }
 
     _next();
   } catch (_error) {
-    return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'AUTH015', _error).server() : _error);
+    return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'CPNB-MAUTHE015', _error).server() : _error);
   }
 };
 
@@ -150,19 +150,19 @@ const verifyInfractionsPermissionMID = (_req, _res, _next) => {
   const CC_RESPONSE = new CmmHttpRespClass(_req, _res);
   try {
     if (!_req.police) {
-      throw new CmmErrorClass(__filename, 'AUTH016', 'Token de acceso requerido').frontend();
+      throw new CmmErrorClass(__filename, 'CPNB-MAUTHE016', 'Token de acceso requerido').frontend();
     }
 
     const ALLOWED_ROLES = ['ADMIN', 'SUPERVISOR'];
     const HAS_PERMISSION = _req.police.roles.some(role => ALLOWED_ROLES.includes(role));
     
     if (!HAS_PERMISSION) {
-      throw new CmmErrorClass(__filename, 'AUTH017', 'No tiene permisos para gestionar infracciones').frontend();
+      throw new CmmErrorClass(__filename, 'CPNB-MAUTHE017', 'No tiene permisos para gestionar infracciones').frontend();
     }
 
     _next();
   } catch (_error) {
-    return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'AUTH018', _error).server() : _error);
+    return CC_RESPONSE.sendError(!_error.errorType ? new CmmErrorClass(__filename, 'CPNB-MAUTHE018', _error).server() : _error);
   }
 };
 

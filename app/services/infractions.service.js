@@ -16,11 +16,11 @@ module.exports = {
     try {
       // Verificar si ya existe una infracción con este código
       const EXISTING_INFRACTION = await INFRACTION_MODEL.findOne({ code: _infractionData.code }).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'INFRACTIONE001', _error).database();
+        throw new CmmErrorClass(__filename, 'CPNB-SINFE001', _error).database();
       });
 
       if (EXISTING_INFRACTION) {
-        throw new CmmErrorClass(__filename, 'INFRACTIONE002', 'Ya existe una infracción con este código').frontend();
+        throw new CmmErrorClass(__filename, 'CPNB-SINFE002', 'Ya existe una infracción con este código').frontend();
       }
 
       const INFRACTION_DATA = {
@@ -30,12 +30,12 @@ module.exports = {
       };
 
       const INFRACTION_RESULT = await INFRACTION_MODEL.create(INFRACTION_DATA).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'INFRACTIONE003', _error).database();
+        throw new CmmErrorClass(__filename, 'CPNB-SINFE003', _error).database();
       });
 
       return INFRACTION_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'INFRACTIONE004', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-SINFE004', _error).server() : _error;
     }
   },
 
@@ -70,11 +70,11 @@ module.exports = {
         .skip(SKIP)
         .limit(_limit)
         .catch((_error) => {
-          throw new CmmErrorClass(__filename, 'INFRACTIONE005', _error).database();
+          throw new CmmErrorClass(__filename, 'CPNB-SINFE005', _error).database();
         });
 
       const TOTAL_COUNT = await INFRACTION_MODEL.countDocuments(WHERE).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'INFRACTIONE006', _error).database();
+        throw new CmmErrorClass(__filename, 'CPNB-SINFE006', _error).database();
       });
 
       return {
@@ -87,7 +87,7 @@ module.exports = {
         }
       };
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'INFRACTIONE007', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-SINFE007', _error).server() : _error;
     }
   },
 
@@ -99,16 +99,16 @@ module.exports = {
   async getInfractionByIdSV(_id) {
     try {
       const INFRACTION_RESULT = await INFRACTION_MODEL.findById(_id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'INFRACTIONE008', _error).database();
+        throw new CmmErrorClass(__filename, 'CPNB-SINFE008', _error).database();
       });
 
       if (!INFRACTION_RESULT) {
-        throw new CmmErrorClass(__filename, 'INFRACTIONE009', 'Infracción no encontrada').frontend();
+        throw new CmmErrorClass(__filename, 'CPNB-SINFE009', 'Infracción no encontrada').frontend();
       }
 
       return INFRACTION_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'INFRACTIONE010', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-SINFE010', _error).server() : _error;
     }
   },
 
@@ -122,11 +122,11 @@ module.exports = {
   async updateInfractionSV(_id, _updateData, _officerId) {
     try {
       const INFRACTION_EXISTS = await INFRACTION_MODEL.findById(_id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'INFRACTIONE011', _error).database();
+        throw new CmmErrorClass(__filename, 'CPNB-SINFE011', _error).database();
       });
 
       if (!INFRACTION_EXISTS) {
-        throw new CmmErrorClass(__filename, 'INFRACTIONE012', 'Infracción no encontrada').frontend();
+        throw new CmmErrorClass(__filename, 'CPNB-SINFE012', 'Infracción no encontrada').frontend();
       }
 
       // Verificar si el nuevo código ya existe en otra infracción
@@ -135,11 +135,11 @@ module.exports = {
           code: _updateData.code,
           _id: { $ne: _id }
         }).catch((_error) => {
-          throw new CmmErrorClass(__filename, 'INFRACTIONE013', _error).database();
+          throw new CmmErrorClass(__filename, 'CPNB-SINFE013', _error).database();
         });
 
         if (EXISTING_INFRACTION) {
-          throw new CmmErrorClass(__filename, 'INFRACTIONE014', 'Ya existe una infracción con este código').frontend();
+          throw new CmmErrorClass(__filename, 'CPNB-SINFE014', 'Ya existe una infracción con este código').frontend();
         }
       }
 
@@ -149,12 +149,12 @@ module.exports = {
       };
 
       const INFRACTION_RESULT = await INFRACTION_MODEL.findByIdAndUpdate(_id, UPDATE_DATA, { new: true }).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'INFRACTIONE015', _error).database();
+        throw new CmmErrorClass(__filename, 'CPNB-SINFE015', _error).database();
       });
 
       return INFRACTION_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'INFRACTIONE016', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-SINFE016', _error).server() : _error;
     }
   },
 
@@ -167,30 +167,30 @@ module.exports = {
   async deleteInfractionSV(_id, _officerId) {
     try {
       const INFRACTION_EXISTS = await INFRACTION_MODEL.findById(_id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'INFRACTIONE017', _error).database();
+        throw new CmmErrorClass(__filename, 'CPNB-SINFE017', _error).database();
       });
 
       if (!INFRACTION_EXISTS) {
-        throw new CmmErrorClass(__filename, 'INFRACTIONE018', 'Infracción no encontrada').frontend();
+        throw new CmmErrorClass(__filename, 'CPNB-SINFE018', 'Infracción no encontrada').frontend();
       }
 
       // Verificar si la infracción tiene multas asociadas
       const { FINE_MODEL } = require('../models/fine.model');
       const FINE_COUNT = await FINE_MODEL.countDocuments({ infraction: _id }).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'INFRACTIONE019', _error).database();
+        throw new CmmErrorClass(__filename, 'CPNB-SINFE019', _error).database();
       });
 
       if (FINE_COUNT > 0) {
-        throw new CmmErrorClass(__filename, 'INFRACTIONE020', 'No se puede eliminar una infracción que tiene multas asociadas').frontend();
+        throw new CmmErrorClass(__filename, 'CPNB-SINFE020', 'No se puede eliminar una infracción que tiene multas asociadas').frontend();
       }
 
       await INFRACTION_MODEL.findByIdAndDelete(_id).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'INFRACTIONE021', _error).database();
+        throw new CmmErrorClass(__filename, 'CPNB-SINFE021', _error).database();
       });
 
       return { message: 'Infracción eliminada exitosamente' };
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'INFRACTIONE022', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-SINFE022', _error).server() : _error;
     }
   },
 
@@ -205,12 +205,12 @@ module.exports = {
         severity: _severity,
         active: true 
       }).sort({ taxUnits: -1 }).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'INFRACTIONE023', _error).database();
+        throw new CmmErrorClass(__filename, 'CPNB-SINFE023', _error).database();
       });
 
       return INFRACTIONS_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'INFRACTIONE024', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-SINFE024', _error).server() : _error;
     }
   },
 
@@ -225,12 +225,12 @@ module.exports = {
         vehicleType: _type,
         active: true 
       }).sort({ taxUnits: -1 }).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'INFRACTIONE025', _error).database();
+        throw new CmmErrorClass(__filename, 'CPNB-SINFE025', _error).database();
       });
 
       return INFRACTIONS_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'INFRACTIONE026', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-SINFE026', _error).server() : _error;
     }
   },
 
@@ -261,7 +261,7 @@ module.exports = {
           }
         }
       ]).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'INFRACTIONE027', _error).database();
+        throw new CmmErrorClass(__filename, 'CPNB-SINFE027', _error).database();
       });
 
       return STATISTICS_RESULT[0] || {
@@ -271,7 +271,7 @@ module.exports = {
         byVehicleType: []
       };
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'INFRACTIONE028', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-SINFE028', _error).server() : _error;
     }
   },
 
@@ -291,12 +291,12 @@ module.exports = {
         ],
         active: true
       }).limit(10).catch((_error) => {
-        throw new CmmErrorClass(__filename, 'INFRACTIONE029', _error).database();
+        throw new CmmErrorClass(__filename, 'CPNB-SINFE029', _error).database();
       });
 
       return INFRACTIONS_RESULT;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'INFRACTIONE030', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-SINFE030', _error).server() : _error;
     }
   }
 };

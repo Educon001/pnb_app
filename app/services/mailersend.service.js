@@ -21,10 +21,10 @@ module.exports = {
   async sendFineMailSV(_emails, _data) {
     try {
       if (!_emails) {
-        throw new CmmErrorClass(__filename, 'MAILERSEND001', 'Error, parámetro "_emails" es requerido').server();
+        throw new CmmErrorClass(__filename, 'CPNB-SMAILS001', 'Error, parámetro "_emails" es requerido').server();
       }
       if (!_data) {
-        throw new CmmErrorClass(__filename, 'MAILERSEND002', 'Error, parámetro "_data" es requerido').server();
+        throw new CmmErrorClass(__filename, 'CPNB-SMAILS002', 'Error, parámetro "_data" es requerido').server();
       }
 
       // Generar HTML del correo
@@ -76,12 +76,12 @@ module.exports = {
       
       // Manejo específico de errores de MailerSend
       let errorMessage = 'Error al enviar correo con MailerSend';
-      let errorCode = 'MAILERSEND003';
+      let errorCode = 'CPNB-SMAILS003';
       
       if (_error.response) {
         const { status, data } = _error.response;
         errorMessage = `MailerSend API Error: ${status} - ${data?.message || 'Error desconocido'}`;
-        errorCode = 'MAILERSEND004';
+        errorCode = 'CPNB-SMAILS004';
       }
       
       throw new CmmErrorClass(__filename, errorCode, {
@@ -102,7 +102,7 @@ module.exports = {
   async _generateHtmlSV(_data = {}) {
     try {
       if (!_data) {
-        throw new CmmErrorClass(__filename, 'MAILERSEND005', 'Error, parámetro "_data" es requerido').server();
+        throw new CmmErrorClass(__filename, 'CPNB-SMAILS005', 'Error, parámetro "_data" es requerido').server();
       }
 
       const LAYOUT = `
@@ -277,7 +277,7 @@ module.exports = {
       return LAYOUT_COMPILED(_data);
 
     } catch (_error) {
-      throw new CmmErrorClass(__filename, 'MAILERSEND006', _error).server();
+      throw new CmmErrorClass(__filename, 'CPNB-SMAILS006', _error).server();
     }
   }
 };

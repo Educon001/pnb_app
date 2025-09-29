@@ -38,9 +38,6 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/pnb_multa
 app.use('/api/auth', require('./app/routers/auth.router'));
 app.use('/api/fines', require('./app/routers/fines.router'));
 app.use('/api/infractions', require('./app/routers/infractions.router'));
-app.use('/api/drivers', require('./app/routers/drivers.router'));
-app.use('/api/vehicles', require('./app/routers/vehicles.router'));
-app.use('/api/statistics', require('./app/routers/statistics.router'));
 
 // Ruta de salud del servidor
 app.get('/api/health', (req, res) => {

@@ -10,8 +10,7 @@ const {
   updateFineSV,
   sendFineSV,
   cancelFineSV,
-  getFinesStatisticsSV,
-  getDashboardSummarySV
+  getFinesStatisticsSV
 } = require('../services/fines.service');
 
 module.exports = {
@@ -23,7 +22,6 @@ module.exports = {
    */
   createFineCON: async (_req, _res) => {
     const CC_RESPONSE = new CmmHttpRespClass(_req, _res);
-    console.log('Controller - Crear multa');
     try {
       // Usar los datos validados en lugar de _req.body
       const VALIDATED_DATA = _req.CC?.VALIDATED_DATA || _req.body;
@@ -32,8 +30,7 @@ module.exports = {
         VALIDATED_DATA,
         _req.police._id
       ).catch(_error => {
-        console.log(_error);
-        throw new CmmErrorClass(__filename, 'FINEE001').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'CPNB-CFINE001', _error).parseCatch(_error);
       });
 
       return CC_RESPONSE.send(
@@ -44,7 +41,7 @@ module.exports = {
     } catch (_error) {
       return CC_RESPONSE.sendError(
         !_error.errorType
-          ? new CmmErrorClass(__filename, 'FINEE002', _error).server()
+          ? new CmmErrorClass(__filename, 'CPNB-CFINE002', _error).server()
           : _error
       );
     }
@@ -64,7 +61,6 @@ module.exports = {
         officer,
         dateFrom,
         dateTo,
-        severity,
         driverId,
         vehiclePlate,
         page = 1,
@@ -76,7 +72,6 @@ module.exports = {
         officer: officer,
         dateFrom: dateFrom,
         dateTo: dateTo,
-        severity: severity,
         driverId: driverId,
         vehiclePlate: vehiclePlate
       };
@@ -94,7 +89,7 @@ module.exports = {
         parseInt(page),
         parseInt(limit)
       ).catch(_error => {
-        throw new CmmErrorClass(__filename, 'FINEE002').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'CPNB-CFINE002').parseCatch(_error);
       });
 
       return CC_RESPONSE.send(
@@ -105,7 +100,7 @@ module.exports = {
     } catch (_error) {
       return CC_RESPONSE.sendError(
         !_error.errorType
-          ? new CmmErrorClass(__filename, 'FINEE002', _error).server()
+          ? new CmmErrorClass(__filename, 'CPNB-CFINE002', _error).server()
           : _error
       );
     }
@@ -122,7 +117,7 @@ module.exports = {
     try {
       const { id } = _req.params;
       const FINE_RESULT = await getFineByIdSV(id).catch(_error => {
-        throw new CmmErrorClass(__filename, 'FINEE003').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'CPNB-CFINE003').parseCatch(_error);
       });
 
       // Verificar permisos (solo el funcionario que creó la multa o un supervisor puede verla)
@@ -147,7 +142,7 @@ module.exports = {
     } catch (_error) {
       return CC_RESPONSE.sendError(
         !_error.errorType
-          ? new CmmErrorClass(__filename, 'FINEE003', _error).server()
+          ? new CmmErrorClass(__filename, 'CPNB-CFINE003', _error).server()
           : _error
       );
     }
@@ -171,7 +166,7 @@ module.exports = {
         UPDATE_DATA,
         _req.police._id
       ).catch(_error => {
-        throw new CmmErrorClass(__filename, 'FINEE005').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'CPNB-CFINE005').parseCatch(_error);
       });
 
       return CC_RESPONSE.send(
@@ -182,7 +177,7 @@ module.exports = {
     } catch (_error) {
       return CC_RESPONSE.sendError(
         !_error.errorType
-          ? new CmmErrorClass(__filename, 'FINEE005', _error).server()
+          ? new CmmErrorClass(__filename, 'CPNB-CFINE005', _error).server()
           : _error
       );
     }
@@ -200,7 +195,7 @@ module.exports = {
       const { id } = _req.params;
       const FINE_RESULT = await sendFineSV(id, _req.police._id).catch(
         _error => {
-          throw new CmmErrorClass(__filename, 'FINEE006').parseCatch(_error);
+          throw new CmmErrorClass(__filename, 'CPNB-CFINE006').parseCatch(_error);
         }
       );
 
@@ -212,7 +207,7 @@ module.exports = {
     } catch (_error) {
       return CC_RESPONSE.sendError(
         !_error.errorType
-          ? new CmmErrorClass(__filename, 'FINEE006', _error).server()
+          ? new CmmErrorClass(__filename, 'CPNB-CFINE006', _error).server()
           : _error
       );
     }
@@ -240,7 +235,7 @@ module.exports = {
 
       const FINE_RESULT = await cancelFineSV(id, reason, _req.police._id).catch(
         _error => {
-          throw new CmmErrorClass(__filename, 'FINEE008').parseCatch(_error);
+          throw new CmmErrorClass(__filename, 'CPNB-CFINE008').parseCatch(_error);
         }
       );
 
@@ -252,7 +247,7 @@ module.exports = {
     } catch (_error) {
       return CC_RESPONSE.sendError(
         !_error.errorType
-          ? new CmmErrorClass(__filename, 'FINEE008', _error).server()
+          ? new CmmErrorClass(__filename, 'CPNB-CFINE008', _error).server()
           : _error
       );
     }
@@ -270,9 +265,9 @@ module.exports = {
       const { dateFrom, dateTo, officer } = _req.query;
 
       const FILTERS = {
-        dateFrom: _dateFrom,
-        dateTo: _dateTo,
-        officer: _officer
+        dateFrom: dateFrom,
+        dateTo: dateTo,
+        officer: officer
       };
 
       // Si no es admin o supervisor, solo puede ver sus propias estadísticas
@@ -285,7 +280,7 @@ module.exports = {
 
       const STATISTICS_RESULT = await getFinesStatisticsSV(FILTERS).catch(
         _error => {
-          throw new CmmErrorClass(__filename, 'FINEE009').parseCatch(_error);
+          throw new CmmErrorClass(__filename, 'CPNB-CFINE009').parseCatch(_error);
         }
       );
 
@@ -297,7 +292,7 @@ module.exports = {
     } catch (_error) {
       return CC_RESPONSE.sendError(
         !_error.errorType
-          ? new CmmErrorClass(__filename, 'FINEE009', _error).server()
+          ? new CmmErrorClass(__filename, 'CPNB-CFINE009', _error).server()
           : _error
       );
     }
@@ -324,14 +319,14 @@ module.exports = {
 
       const STATISTICS_RESULT = await getFinesStatisticsSV(FILTERS).catch(
         _error => {
-          throw new CmmErrorClass(__filename, 'FINEE010').parseCatch(_error);
+          throw new CmmErrorClass(__filename, 'CPNB-CFINE010').parseCatch(_error);
         }
       );
 
       // Obtener multas recientes
       const RECENT_FINES_RESULT = await getFinesSV(FILTERS, 1, 5).catch(
         _error => {
-          throw new CmmErrorClass(__filename, 'FINEE011').parseCatch(_error);
+          throw new CmmErrorClass(__filename, 'CPNB-CFINE011').parseCatch(_error);
         }
       );
 
@@ -346,7 +341,7 @@ module.exports = {
     } catch (_error) {
       return CC_RESPONSE.sendError(
         !_error.errorType
-          ? new CmmErrorClass(__filename, 'FINEE010', _error).server()
+          ? new CmmErrorClass(__filename, 'CPNB-CFINE010', _error).server()
           : _error
       );
     }

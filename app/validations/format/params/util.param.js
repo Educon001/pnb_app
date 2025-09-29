@@ -39,7 +39,7 @@ exports.CmmPrimaryKeyParam = (_tag = '', _location = '', _required = true) => {
       .isLength({ min: 1, max: 19 })
       .withMessage('La longitud debe estar entre 1 y 19 caracteres');
   } catch (_error) {
-    throw !_error.errorType ? new CmmErrorClass(__filename, 'CMM-PUTL004', _error).server() : _error;
+    throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-UPARAM004', _error).server() : _error;
   }
 };
 
@@ -80,7 +80,7 @@ exports.CmmStringParam = (_tag = '', _location = '', _length = { min: 3, max: 10
 
           return _value;
         } catch (_error) {
-          throw !_error.errorType ? new CmmErrorClass(__filename, 'CMM-PUTL013', _error).server() : _error;
+          throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-UPARAM013', _error).server() : _error;
         }
       });
 
@@ -92,7 +92,7 @@ exports.CmmStringParam = (_tag = '', _location = '', _length = { min: 3, max: 10
 
     return VALIDATION;
   } catch (_error) {
-    throw !_error.errorType ? new CmmErrorClass(__filename, 'CMM-PUTL015', _error).server() : _error;
+    throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-UPARAM015', _error).server() : _error;
   }
 };
 
@@ -114,7 +114,7 @@ exports.CmmArrayParam = (_tag = '', _location = '', _required = true) => {
       .isArray({ min: 1 })
       .withMessage('Debe ser un array con al menos un elemento');
   } catch (_error) {
-    throw !_error.errorType ? new CmmErrorClass(__filename, 'CMM-PUTL032', _error).server() : _error;
+    throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-UPARAM032', _error).server() : _error;
   }
 };
 
@@ -140,14 +140,14 @@ exports.CmmBooleanParam = (_tag = '', _location = '', _required = true) => {
           }
           return true;
         } catch (_error) {
-          throw !_error.errorType ? new CmmErrorClass(__filename, 'CMM-PUTL065', _error).server() : _error;
+          throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-UPARAM065', _error).server() : _error;
         }
       })
       .isBoolean({ loose: false })
       .withMessage('Debe ser un valor booleano')
       .toBoolean({ strict: true });
   } catch (_error) {
-    throw !_error.errorType ? new CmmErrorClass(__filename, 'CMM-PUTL039', _error).server() : _error;
+    throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-UPARAM039', _error).server() : _error;
   }
 };
 
@@ -173,11 +173,11 @@ exports.CmmObjectParam = (_tag = '', _location = '', _required = true) => {
           }
           return _value;
         } catch (_error) {
-          throw !_error.errorType ? new CmmErrorClass(__filename, 'CMM-PUTL063', _error).server() : _error;
+          throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-UPARAM063', _error).server() : _error;
         }
       });
   } catch (_error) {
-    throw !_error.errorType ? new CmmErrorClass(__filename, 'CMM-PUTL064', _error).server() : _error;
+    throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-UPARAM064', _error).server() : _error;
   }
 };
 
@@ -208,11 +208,11 @@ exports.CmmObjectIdParam = (_tag = '', _location = '', _required = true) => {
             throw new Error('Debe ser un ObjectId válido');
           }
         } catch (_error) {
-          throw !_error.errorType ? new CmmErrorClass(__filename, 'CMM-PUTL071', _error).server() : _error;
+          throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-UPARAM071', _error).server() : _error;
         }
       });
   } catch (_error) {
-    throw !_error.errorType ? new CmmErrorClass(__filename, 'CMM-PUTL072', _error).server() : _error;
+    throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-UPARAM072', _error).server() : _error;
   }
 };
 
@@ -248,11 +248,11 @@ exports.CmmEmailParam = (_tag = '', _location = '', _required = true, _format = 
             return _value;
           }
         } catch (_error) {
-          throw !_error.errorType ? new CmmErrorClass(__filename, 'CMM-PUTL012', _error).server() : _error;
+          throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-UPARAM012', _error).server() : _error;
         }
       });
   } catch (_error) {
-    throw !_error.errorType ? new CmmErrorClass(__filename, 'CMM-PUTL043', _error).server() : _error;
+    throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-UPARAM043', _error).server() : _error;
   }
 };
 
@@ -277,7 +277,7 @@ exports.CmmNumericParam = (_tag = '', _location = '', _length = { min: 3, max: 2
       .isLength(_length)
       .withMessage(`La longitud debe estar entre ${_length.min} y ${_length.max} caracteres`);
   } catch (_error) {
-    throw !_error.errorType ? new CmmErrorClass(__filename, 'CMM-PUTL036', _error).server() : _error;
+    throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-UPARAM036', _error).server() : _error;
   }
 };
 
@@ -309,11 +309,11 @@ exports.CmmDateParam = (_tag = '', _location = '', _required = true) => {
             return true;
           }
         } catch (_error) {
-          throw !_error.errorType ? new CmmErrorClass(__filename, 'CMM-PUTL073', _error).server() : _error;
+          throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-UPARAM073', _error).server() : _error;
         }
       });
   } catch (_error) {
-    throw !_error.errorType ? new CmmErrorClass(__filename, 'CMM-PUTL029', _error).server() : _error;
+    throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-UPARAM029', _error).server() : _error;
   }
 };
 
@@ -338,6 +338,6 @@ exports.CmmStringPasswordParam = (_tag = '', _location = '', _length = { min: 3,
       .isLength(_length)
       .withMessage(`La longitud debe estar entre ${_length.min} y ${_length.max} caracteres`);
   } catch (_error) {
-    throw !_error.errorType ? new CmmErrorClass(__filename, 'CMM-PUTL020', _error).server() : _error;
+    throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-UPARAM020', _error).server() : _error;
   }
 };

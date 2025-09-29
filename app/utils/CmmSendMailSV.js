@@ -18,12 +18,12 @@ module.exports = {
    */
   _getTransportNotifyEmailService: async (_credentials) => {
     try {
-      if (!_credentials) throw new CmmErrorClass(__filename, 'CMM-SMAILE030', 'Error, parámetro "_credentials" es requerido').server();
-      if (!_credentials.host) throw new CmmErrorClass(__filename, 'CMM-SMAILE031', 'Error, campo de credencial "HOST" es requerido y no puede ser vacío').server();
-      if (!_credentials.port) throw new CmmErrorClass(__filename, 'CMM-SMAILE031', 'Error, campo de credencial "PORT" es requerido y no puede ser vacío').server();
-      if (_credentials.secure === undefined || _credentials.secure === null || _credentials.secure === '') throw new CmmErrorClass(__filename, 'CMM-SMAILE031', 'Error, campo de credencial "SECURE" es requerido y no puede ser vacío').server();
-      if (!_credentials.username) throw new CmmErrorClass(__filename, 'CMM-SMAILE031', 'Error, campo de credencial "USERNAME" es requerido y no puede ser vacío').server();
-      if (!_credentials.password) throw new CmmErrorClass(__filename, 'CMM-SMAILE031', 'Error, campo de credencial "PASSWORD" es requerido y no puede ser vacío').server();
+      if (!_credentials) throw new CmmErrorClass(__filename, 'CPNB-USMAIL030', 'Error, parámetro "_credentials" es requerido').server();
+      if (!_credentials.host) throw new CmmErrorClass(__filename, 'CPNB-USMAIL031', 'Error, campo de credencial "HOST" es requerido y no puede ser vacío').server();
+      if (!_credentials.port) throw new CmmErrorClass(__filename, 'CPNB-USMAIL031', 'Error, campo de credencial "PORT" es requerido y no puede ser vacío').server();
+      if (_credentials.secure === undefined || _credentials.secure === null || _credentials.secure === '') throw new CmmErrorClass(__filename, 'CPNB-USMAIL031', 'Error, campo de credencial "SECURE" es requerido y no puede ser vacío').server();
+      if (!_credentials.username) throw new CmmErrorClass(__filename, 'CPNB-USMAIL031', 'Error, campo de credencial "USERNAME" es requerido y no puede ser vacío').server();
+      if (!_credentials.password) throw new CmmErrorClass(__filename, 'CPNB-USMAIL031', 'Error, campo de credencial "PASSWORD" es requerido y no puede ser vacío').server();
       
       // Creamos el transporter con configuración de timeout y reintentos
       const TRANSPORTER = createTransport({
@@ -38,7 +38,7 @@ module.exports = {
       // Retornamos el transporter
       return TRANSPORTER;
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'CMM-SMAILE009', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-USMAIL009', _error).server() : _error;
     }
   },
 
@@ -58,9 +58,9 @@ module.exports = {
   CmmSendMailSV: async (_emails, _subject, _html, _credentials, _attachments = null) => {
     try {
       // Verificamos si los parámetros son requeridos
-      if (!_emails) throw new CmmErrorClass(__filename, 'CMM-SMAILE013', 'Error, parámetro "_emails"').server();
-      if (!_html) throw new CmmErrorClass(__filename, 'CMM-SMAILE014', 'Error, parámetro "_html"').server();
-      if (!_credentials) throw new CmmErrorClass(__filename, 'CMM-SMAILE014', 'Error, parámetro "_credentials"').server();
+      if (!_emails) throw new CmmErrorClass(__filename, 'CPNB-USMAIL013', 'Error, parámetro "_emails"').server();
+      if (!_html) throw new CmmErrorClass(__filename, 'CPNB-USMAIL014', 'Error, parámetro "_html"').server();
+      if (!_credentials) throw new CmmErrorClass(__filename, 'CPNB-USMAIL014', 'Error, parámetro "_credentials"').server();
       
       // Logging inicial para debugging en Render
       console.log('[SMTP INIT] Iniciando envío de correo:', {
@@ -75,7 +75,7 @@ module.exports = {
 
       const TRANSPORTER_EMAIL = await module.exports._getTransportNotifyEmailService(_credentials).catch((_error) => {
         console.error('[SMTP ERROR] Error creando transporter:', _error);
-        throw new CmmErrorClass(__filename, 'CMM-SMAILE015').parseCatch(_error);
+        throw new CmmErrorClass(__filename, 'CPNB-USMAIL015').parseCatch(_error);
       });
 
       // Preparar objeto de email base
@@ -109,7 +109,7 @@ module.exports = {
           
           if (attempt === MAX_ATTEMPTS) {
             // Último intento falló
-            throw new CmmErrorClass(__filename, 'CMM-SMAILE016', {
+            throw new CmmErrorClass(__filename, 'CPNB-USMAIL016', {
               originalError: _error,
               attempts: MAX_ATTEMPTS,
               message: `Falló después de ${MAX_ATTEMPTS} intentos`
@@ -132,7 +132,7 @@ module.exports = {
         data: EMAIL_SENT_RESULT
       };
     } catch (_error) {
-      throw !_error.errorType ? new CmmErrorClass(__filename, 'CMM-SMAILE017', _error).server() : _error;
+      throw !_error.errorType ? new CmmErrorClass(__filename, 'CPNB-USMAIL017', _error).server() : _error;
     }
   },
 
