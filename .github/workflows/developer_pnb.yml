@@ -37,12 +37,6 @@ jobs:
           cp server.js deployment/
           cp -r node_modules deployment/ 2>/dev/null || true
 
-      - name: Create .env file for production
-        run: |
-          cd deployment
-          echo "NODE_ENV=production" > .env
-          echo "PORT=8080" >> .env
-
       - name: Archive deployment package
         run: |
           cd deployment
@@ -58,9 +52,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
       id-token: write
       contents: read
@@ -81,30 +72,6 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F4A1D35A5B41456CA18676903709090F }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_32000235971744F79EC010B1F93E21A8 }}
 
-      - name: Configure Azure Web App settings
-        uses: azure/appservice-settings@v1
-        with:
-          app-name: 'pnb'
-          slot-name: 'Production'
-          app-settings-json: |
-            [
-              {
-                "name": "NODE_ENV",
-                "value": "production",
-                "slotSetting": false
-              },
-              {
-                "name": "WEBSITE_NODE_DEFAULT_VERSION",
-                "value": "~22",
-                "slotSetting": false
-              },
-              {
-                "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
-                "value": "false",
-                "slotSetting": false
-              }
-            ]
-
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
@@ -112,19 +79,6 @@ jobs:
           app-name: 'pnb'
           slot-name: 'Production'
           package: .
-
-      - name: Wait for deployment to stabilize
-        run: sleep 30
-
-      - name: Health check
-        run: |
-          response=$(curl -s -o /dev/null -w "%{http_code}" https://pnb.azurewebsites.net/api/health || echo "000")
-          if [ "$response" = "200" ]; then
-            echo "✅ Health check passed"
-          else
-            echo "⚠️  Health check returned status: $response"
-            echo "Deployment may need verification"
-          fi
 
       - name: Azure logout
         run: az logout
